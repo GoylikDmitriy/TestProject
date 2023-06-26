@@ -1,8 +1,7 @@
-package com.goylik.questionsPortal.questionsPortal.model;
+package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "answer_options")

@@ -1,7 +1,8 @@
-package com.goylik.questionsPortal.questionsPortal.service;
+package com.goylik.questionsPortal.questionsPortal.model.service;
 
-import com.goylik.questionsPortal.questionsPortal.model.Question;
-import com.goylik.questionsPortal.questionsPortal.repository.QuestionRepository;
+import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
+import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
+import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,32 @@ public class QuestionService {
         this.answerService = answerService;
     }
 
+    @Transactional(readOnly = true)
+    public List<AnswerOption> findAllAnswerOptions() {
+        return this.questionRepository.findAllAnswerOptions();
+    }
+
+    @Transactional(readOnly = true)
+    public List<AnswerOption> findAllAnswerOptionsByQuestionId(Integer id) {
+        return this.questionRepository.findAllAnswerOptionsByQuestionId(id);
+    }
+
+    @Transactional
+    public void deleteAnswerOptionsByQuestionId(Integer id) {
+        this.questionRepository.deleteAnswerOptionsByQuestionId(id);
+    }
+
     @Transactional
     public void update(Question question) {
-        this.answerService.delete(question.getAnswer());
+        if (question.getAnswer() != null) {
+            this.answerService.delete(question.getAnswer());
+        }
+
+        if (question.getOptions() != null) {
+            this.questionRepository.deleteAnswerOptionsByQuestionId(question.getId());
+            question.setOptions(null);
+        }
+
         this.questionRepository.save(question);
     }
 

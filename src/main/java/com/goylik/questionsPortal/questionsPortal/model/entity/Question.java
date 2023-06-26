@@ -1,7 +1,10 @@
-package com.goylik.questionsPortal.questionsPortal.model;
+package com.goylik.questionsPortal.questionsPortal.model.entity;
 
+import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
+import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,7 +21,7 @@ public class Question extends BaseEntity {
     @OneToOne(mappedBy = "question", cascade = CascadeType.REMOVE)
     private Answer answer;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     private List<AnswerOption> options;
 
@@ -27,6 +30,16 @@ public class Question extends BaseEntity {
     public Question(String question, AnswerType answerType) {
         this.question = question;
         this.answerType = answerType;
+    }
+
+    public void addAnswerOption(AnswerOption option) {
+        if (option.isNew()) {
+            if (this.options == null) {
+                this.options = new ArrayList<>();
+            }
+
+            this.options.add(option);
+        }
     }
 
     public String getQuestion() {

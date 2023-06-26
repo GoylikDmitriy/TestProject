@@ -1,6 +1,6 @@
-package com.goylik.questionsPortal.questionsPortal.repository;
+package com.goylik.questionsPortal.questionsPortal.model.repository;
 
-import com.goylik.questionsPortal.questionsPortal.model.User;
+import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 

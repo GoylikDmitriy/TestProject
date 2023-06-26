@@ -1,8 +1,9 @@
-package com.goylik.questionsPortal.questionsPortal.service;
+package com.goylik.questionsPortal.questionsPortal.model.service;
 
-import com.goylik.questionsPortal.questionsPortal.model.User;
-import com.goylik.questionsPortal.questionsPortal.repository.UserRepository;
+import com.goylik.questionsPortal.questionsPortal.model.entity.User;
+import com.goylik.questionsPortal.questionsPortal.model.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,14 +12,24 @@ import java.util.List;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final AnswerService answerService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, AnswerService answerService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.answerService = answerService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Transactional
+    public boolean isUserExist(User user) {
+        return this.userRepository.findByEmail(user.getEmail()) != null;
     }
 
     @Transactional
     public void save(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         this.userRepository.save(user);
     }
 
@@ -39,6 +50,7 @@ public class UserService {
 
     @Transactional
     public void delete(User user) {
+        user.getIncomingQuestions().forEach(q -> this.answerService.delete(q.getAnswer()));
         this.userRepository.delete(user);
     }
 

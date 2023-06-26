@@ -1,5 +1,6 @@
-package com.goylik.questionsPortal.questionsPortal.model;
+package com.goylik.questionsPortal.questionsPortal.model.entity;
 
+import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -34,11 +35,12 @@ public class Answer extends BaseEntity {
         this.question = question;
     }
 
-
     @Override
     public String toString() {
         return "Answer{" +
                 "answer='" + answer + '\'' +
                 '}';
     }
+
+
 }
