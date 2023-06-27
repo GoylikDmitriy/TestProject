@@ -2,10 +2,6 @@ package com.goylik.questionsPortal.questionsPortal.model.entity;
 
 import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,28 +11,18 @@ import java.util.Objects;
 @Table(name = "users")
 public class User extends BaseEntity {
     @Column(name = "first_name")
-    @NotEmpty(message = "shouldn't be empty")
-    @Size(max = 30, message = "max size is 30")
     private String firstName;
 
     @Column(name = "last_name")
-    @NotEmpty(message = "shouldn't be empty")
-    @Size(max = 30, message = "max size is 30")
     private String lastName;
 
     @Column(name = "email")
-    @NotEmpty(message = "shouldn't be empty")
-    @Email(message = "email not valid")
     private String email;
 
     @Column(name = "password")
-    @NotEmpty(message = "shouldn't be empty")
-    @Size(min = 5, message = "it should contain at least 5 symbols")
     private String password;
 
     @Column(name = "phone_number")
-    @NotEmpty(message = "shouldn't be empty")
-    @Digits(fraction = 0, integer = 9)
     private String phoneNumber;
 
     @OneToMany(fetch = FetchType.EAGER)
