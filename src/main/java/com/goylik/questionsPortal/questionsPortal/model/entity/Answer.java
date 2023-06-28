@@ -10,7 +10,7 @@ public class Answer extends BaseEntity {
     private String answer;
 
     @OneToOne
-    @JoinColumn(name = "question_id")
+    @JoinColumn(name = "question_id", nullable = false)
     private Question question;
 
     public Answer() {}

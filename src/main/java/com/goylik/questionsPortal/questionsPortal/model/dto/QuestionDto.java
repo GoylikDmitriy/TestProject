@@ -5,6 +5,7 @@ import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
 import java.util.List;
 
 public class QuestionDto {
+    private Integer id;
     private String question;
     private AnswerType answerType;
     private AnswerDto answer;
@@ -40,5 +41,13 @@ public class QuestionDto {
 
     public void setOptions(List<AnswerOptionDto> options) {
         this.options = options;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 }

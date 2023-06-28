@@ -43,7 +43,10 @@ public class WebSecurityConfig {
                         .failureUrl("/login?error")
                 )
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/login", "/sign-up", "/error").permitAll()
+                        .requestMatchers(
+                                "/login", "/sign-up","/error",
+                                "/registrationConfirm", "/resendVerificationToken"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout

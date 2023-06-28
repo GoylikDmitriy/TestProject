@@ -1,7 +1,11 @@
 package com.goylik.questionsPortal.questionsPortal.model.service.impl;
 
+import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
+import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
+import com.goylik.questionsPortal.questionsPortal.model.mapper.IAnswerOptionMapper;
+import com.goylik.questionsPortal.questionsPortal.model.mapper.IQuestionMapper;
 import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
 import com.goylik.questionsPortal.questionsPortal.model.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,28 +17,33 @@ import java.util.List;
 @Service
 public class QuestionService implements IQuestionService {
     private final QuestionRepository questionRepository;
-    private AnswerService answerService;
+    private final AnswerService answerService;
+    private final IQuestionMapper questionMapper;
+    private final IAnswerOptionMapper optionMapper;
 
     @Autowired
-    public QuestionService(QuestionRepository questionRepository) {
+    public QuestionService(QuestionRepository questionRepository, AnswerService answerService,
+                           IQuestionMapper questionMapper, IAnswerOptionMapper optionMapper) {
         this.questionRepository = questionRepository;
-    }
-
-    @Autowired
-    public void setAnswerService(AnswerService answerService) {
         this.answerService = answerService;
+        this.questionMapper = questionMapper;
+        this.optionMapper = optionMapper;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerOption> findAllAnswerOptions() {
-        return this.questionRepository.findAllAnswerOptions();
+    public List<AnswerOptionDto> findAllAnswerOptions() {
+        List<AnswerOption> options = this.questionRepository.findAllAnswerOptions();
+        List<AnswerOptionDto> optionDtoList = options.stream().map(this.optionMapper::map).toList();
+        return optionDtoList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerOption> findAllAnswerOptionsByQuestionId(Integer id) {
-        return this.questionRepository.findAllAnswerOptionsByQuestionId(id);
+    public List<AnswerOptionDto> findAllAnswerOptionsByQuestionId(Integer id) {
+        List<AnswerOption> options = this.questionRepository.findAllAnswerOptionsByQuestionId(id);
+        List<AnswerOptionDto> optionDtoList = options.stream().map(this.optionMapper::map).toList();
+        return optionDtoList;
     }
 
     @Override
@@ -45,40 +54,48 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional
-    public void update(Question question) {
-        if (question.getAnswer() != null) {
-            this.answerService.delete(question.getAnswer());
+    public void update(QuestionDto questionDto) {
+        if (questionDto.getAnswer() != null) {
+            this.answerService.delete(questionDto.getAnswer());
         }
 
-        if (question.getOptions() != null) {
-            this.questionRepository.deleteAnswerOptionsByQuestionId(question.getId());
-            question.setOptions(null);
+        if (questionDto.getOptions() != null) {
+            this.questionRepository.deleteAnswerOptionsByQuestionId(questionDto.getId());
+            questionDto.setOptions(null);
         }
 
+        Question question = this.questionMapper.map(questionDto);
         this.questionRepository.save(question);
     }
 
     @Override
     @Transactional
-    public void save(Question question) {
-        this.questionRepository.save(question);
+    public QuestionDto save(QuestionDto questionDto) {
+        Question question = this.questionMapper.map(questionDto);
+        question = this.questionRepository.save(question);
+        return this.questionMapper.map(question);
     }
 
     @Override
     @Transactional
-    public void delete(Question question) {
+    public void delete(QuestionDto questionDto) {
+        Question question = this.questionMapper.map(questionDto);
         this.questionRepository.delete(question);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Question> findAll() {
-        return this.questionRepository.findAll();
+    public List<QuestionDto> findAll() {
+        List<Question> questions = this.questionRepository.findAll();
+        List<QuestionDto> questionDtoList = questions.stream().map(this.questionMapper::map).toList();
+        return questionDtoList;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Question findById(Integer id) {
-        return this.questionRepository.findById(id).orElse(null);
+    public QuestionDto findById(Integer id) {
+        Question question = this.questionRepository.findById(id).orElse(null);
+        QuestionDto questionDto = this.questionMapper.map(question);
+        return questionDto;
     }
 }
