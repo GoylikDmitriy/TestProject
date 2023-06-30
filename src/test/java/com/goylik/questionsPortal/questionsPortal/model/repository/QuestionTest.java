@@ -2,10 +2,13 @@ package com.goylik.questionsPortal.questionsPortal.model.repository;
 
 import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
 import com.goylik.questionsPortal.questionsPortal.model.DataJpaTest;
+import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
 import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -20,6 +23,14 @@ public class QuestionTest extends DataJpaTest {
     public void shouldFindAllAnswerOptions() {
         List<AnswerOption> options = this.questionRepository.findAllAnswerOptions();
         assertThat(options).hasSize(3);
+    }
+
+    @Test void shouldFindAllAnswerOptionsPage() {
+        Page<AnswerOption> options = this.questionRepository.findAllAnswerOptions(PageRequest.of(0, 2));
+        assertThat(options).hasSize(2);
+
+        options = this.questionRepository.findAllAnswerOptions(PageRequest.of(1, 2));
+        assertThat(options).hasSize(1);
     }
 
     @Test
@@ -37,6 +48,15 @@ public class QuestionTest extends DataJpaTest {
     public void shouldFindAllQuestions() {
         List<Question> questions = this.questionRepository.findAll();
         assertThat(questions).hasSize(4);
+    }
+
+    @Test
+    public void shouldFindAllQuestionsPage() {
+        Page<Question> questions = this.questionRepository.findAll(PageRequest.of(0, 2));
+        assertThat(questions).hasSize(2);
+
+        questions = this.questionRepository.findAll(PageRequest.of(1, 2));
+        assertThat(questions).hasSize(2);
     }
 
     @Test

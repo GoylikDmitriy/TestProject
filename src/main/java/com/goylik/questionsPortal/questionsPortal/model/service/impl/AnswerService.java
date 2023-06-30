@@ -9,6 +9,9 @@ import com.goylik.questionsPortal.questionsPortal.model.repository.AnswerReposit
 import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
 import com.goylik.questionsPortal.questionsPortal.model.service.IAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,9 +57,9 @@ public class AnswerService implements IAnswerService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerDto> findAll() {
-        List<Answer> answers = this.answerRepository.findAll();
-        List<AnswerDto> answerDtoList = answers.stream().map(this.answerMapper::map).toList();
+    public Page<AnswerDto> findAll(Pageable pageable) {
+        Page<Answer> answers = this.answerRepository.findAll(pageable);
+        Page<AnswerDto> answerDtoList = new PageImpl<>(answers.stream().map(this.answerMapper::map).toList());
         return answerDtoList;
     }
 

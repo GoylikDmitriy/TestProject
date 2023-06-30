@@ -10,11 +10,16 @@ import com.goylik.questionsPortal.questionsPortal.model.repository.UserRepositor
 import com.goylik.questionsPortal.questionsPortal.model.repository.VerificationTokenRepository;
 import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -74,11 +79,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<UserDto> findByLastName(String lastName) {
-        List<User> users = this.userRepository.findByLastName(lastName);
-        List<UserDto> userDtoList = users.stream().map(this.userMapper::map).toList();
-        return userDtoList;
+    @Transactional
+    public Page<UserDto> findByLastName(String lastName, Pageable pageable) {
+        Page<User> users = this.userRepository.findByLastName(lastName, pageable);
+        Page<UserDto> userDtoPage = new PageImpl<>(users.stream().map(this.userMapper::map).toList());
+        return userDtoPage;
     }
 
     @Override
@@ -99,9 +104,9 @@ public class UserService implements IUserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserDto> findAll() {
-        List<User> users = this.userRepository.findAll();
-        List<UserDto> userDtoList = users.stream().map(this.userMapper::map).toList();
+    public Page<UserDto> findAll(Pageable pageable) {
+        Page<User> users = this.userRepository.findAll(pageable);
+        Page<UserDto> userDtoList = new PageImpl<>(users.stream().map(this.userMapper::map).toList());
         return userDtoList;
     }
 

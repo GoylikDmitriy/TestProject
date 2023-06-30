@@ -9,6 +9,9 @@ import com.goylik.questionsPortal.questionsPortal.model.mapper.IQuestionMapper;
 import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
 import com.goylik.questionsPortal.questionsPortal.model.service.IQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,9 +35,9 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnswerOptionDto> findAllAnswerOptions() {
-        List<AnswerOption> options = this.questionRepository.findAllAnswerOptions();
-        List<AnswerOptionDto> optionDtoList = options.stream().map(this.optionMapper::map).toList();
+    public Page<AnswerOptionDto> findAllAnswerOptions(Pageable pageable) {
+        Page<AnswerOption> options = this.questionRepository.findAllAnswerOptions(pageable);
+        Page<AnswerOptionDto> optionDtoList = new PageImpl<>(options.stream().map(this.optionMapper::map).toList());
         return optionDtoList;
     }
 
@@ -85,9 +88,9 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<QuestionDto> findAll() {
-        List<Question> questions = this.questionRepository.findAll();
-        List<QuestionDto> questionDtoList = questions.stream().map(this.questionMapper::map).toList();
+    public Page<QuestionDto> findAll(Pageable pageable) {
+        Page<Question> questions = this.questionRepository.findAll(pageable);
+        Page<QuestionDto> questionDtoList = new PageImpl<>(questions.stream().map(this.questionMapper::map).toList());
         return questionDtoList;
     }
 

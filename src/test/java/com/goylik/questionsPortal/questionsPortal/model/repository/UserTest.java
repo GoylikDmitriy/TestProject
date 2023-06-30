@@ -5,6 +5,9 @@ import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -31,6 +34,15 @@ public class UserTest extends DataJpaTest {
     }
 
     @Test
+    public void shouldFindAllUsersPage() {
+        Page<User> users = this.userRepository.findAll(PageRequest.of(0, 3));
+        assertThat(users).hasSize(3);
+
+        users = this.userRepository.findAll(PageRequest.of(1, 3));
+        assertThat(users).hasSize(1);
+    }
+
+    @Test
     public void shouldFindUserById() {
         User user = this.userRepository.findById(1).orElse(null);
         assertThat(user).isNotNull();
@@ -47,6 +59,12 @@ public class UserTest extends DataJpaTest {
 
         users = this.userRepository.findByLastName("Coper");
         assertThat(users).isEmpty();
+    }
+
+    @Test
+    public void shouldFindUserByLastNamePage() {
+        Page<User> users = this.userRepository.findByLastName("Cooper", PageRequest.of(0, 3));
+        assertThat(users).hasSize(1);
     }
 
     @Test

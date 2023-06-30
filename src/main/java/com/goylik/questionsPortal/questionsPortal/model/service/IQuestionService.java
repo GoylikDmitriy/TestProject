@@ -4,16 +4,19 @@ import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface IQuestionService {
-    List<QuestionDto> findAll();
+    Page<QuestionDto> findAll(Pageable pageable);
     QuestionDto findById(Integer id);
     QuestionDto save(QuestionDto question);
     void update(QuestionDto question);
     void delete(QuestionDto question);
     void deleteAnswerOptionsByQuestionId(Integer id);
+    Page<AnswerOptionDto> findAllAnswerOptions(Pageable pageable);
     List<AnswerOptionDto> findAllAnswerOptionsByQuestionId(Integer id);
-    List<AnswerOptionDto> findAllAnswerOptions();
 }

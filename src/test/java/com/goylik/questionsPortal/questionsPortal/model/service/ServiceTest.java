@@ -9,8 +9,12 @@ import com.goylik.questionsPortal.questionsPortal.model.entity.Answer;
 import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -25,11 +29,17 @@ public class ServiceTest extends DataJpaTest {
     @Autowired
     private IAnswerService answerService;
 
+    Pageable pageable;
+    @BeforeEach
+    public void setup() {
+        pageable = PageRequest.of(0, Integer.MAX_VALUE);
+    }
+
     @Test
     public void whenDeleteUserDeleteQuestions() {
         UserDto user = this.userService.findById(1);
         this.userService.delete(user);
-        List<QuestionDto> questions = this.questionService.findAll();
+        Page<QuestionDto> questions = this.questionService.findAll(pageable);
 
         assertThat(questions).hasSize(2);
         assertThat(this.questionService.findById(1)).isNull();
@@ -41,7 +51,7 @@ public class ServiceTest extends DataJpaTest {
         QuestionDto question = this.questionService.findById(1);
         question.setQuestion("TEST change.");
         this.questionService.update(question);
-        List<AnswerDto> answers = this.answerService.findAll();
+        Page<AnswerDto> answers = this.answerService.findAll(pageable);
 
         assertThat(answers).hasSize(2);
         assertThat(this.answerService.findById(1)).isNull();
@@ -51,7 +61,7 @@ public class ServiceTest extends DataJpaTest {
     public void whenDeleteQuestionDeleteAnswer() {
         QuestionDto question = this.questionService.findById(1);
         this.questionService.delete(question);
-        List<AnswerDto> answers = this.answerService.findAll();
+        Page<AnswerDto> answers = this.answerService.findAll(pageable);
 
         assertThat(answers).hasSize(2);
         assertThat(this.answerService.findById(1)).isNull();
@@ -61,7 +71,7 @@ public class ServiceTest extends DataJpaTest {
     public void whenDeleteAnswerQuestionAnswerIsNull() {
         AnswerDto answer = this.answerService.findById(1);
         this.answerService.delete(answer);
-        List<QuestionDto> questions = this.questionService.findAll();
+        Page<QuestionDto> questions = this.questionService.findAll(pageable);
         QuestionDto question = this.questionService.findById(1);
 
         assertThat(questions).hasSize(4);
@@ -72,7 +82,7 @@ public class ServiceTest extends DataJpaTest {
     public void whenDeleteUserDeleteAnswers() {
         UserDto user = this.userService.findById(1);
         this.userService.delete(user);
-        List<AnswerDto> answers = this.answerService.findAll();
+        Page<AnswerDto> answers = this.answerService.findAll(pageable);
         assertThat(answers).hasSize(1);
     }
 
@@ -87,7 +97,7 @@ public class ServiceTest extends DataJpaTest {
         List<AnswerOptionDto> options = question.getOptions();
         assertThat(options).isNull();
 
-        options = this.questionService.findAllAnswerOptions();
-        assertThat(options).isEmpty();
+        Page<AnswerOptionDto> answerOptions = this.questionService.findAllAnswerOptions(pageable);
+        assertThat(answerOptions).isEmpty();
     }
 }

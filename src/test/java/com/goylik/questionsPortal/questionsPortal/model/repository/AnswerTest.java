@@ -2,8 +2,11 @@ package com.goylik.questionsPortal.questionsPortal.model.repository;
 
 import com.goylik.questionsPortal.questionsPortal.model.DataJpaTest;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Answer;
+import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -18,6 +21,15 @@ public class AnswerTest extends DataJpaTest {
     public void shouldFindAllAnswers() {
         List<Answer> answers = this.answerRepository.findAll();
         assertThat(answers).hasSize(3);
+    }
+
+    @Test
+    public void shouldFindAllAnswersPage() {
+        Page<Answer> answers = this.answerRepository.findAll(PageRequest.of(0, 2));
+        assertThat(answers).hasSize(2);
+
+        answers = this.answerRepository.findAll(PageRequest.of(1, 2));
+        assertThat(answers).hasSize(1);
     }
 
     @Test
