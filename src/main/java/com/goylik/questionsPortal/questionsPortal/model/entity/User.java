@@ -1,6 +1,5 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class User extends BaseEntity {
     @JoinColumn(name = "to_user_id")
     private List<Question> incomingQuestions;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinColumn(name = "from_user_id")
     private List<Question> outgoingQuestions;
 

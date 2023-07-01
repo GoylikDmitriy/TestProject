@@ -1,6 +1,5 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,7 +9,7 @@ public class Answer extends BaseEntity {
     private String answer;
 
     @OneToOne
-    @JoinColumn(name = "question_id", nullable = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 
     public Answer() {}

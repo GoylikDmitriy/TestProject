@@ -1,4 +1,4 @@
-package com.goylik.questionsPortal.questionsPortal.model;
+package com.goylik.questionsPortal.questionsPortal.model.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

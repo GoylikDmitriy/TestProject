@@ -1,7 +1,6 @@
 package com.goylik.questionsPortal.questionsPortal.util;
 
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
-import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,15 +10,17 @@ import org.springframework.validation.Validator;
 @Component
 public class UserValidator implements Validator {
     private final IUserService userService;
+    private final PasswordValidator passwordValidator;
 
     @Autowired
-    public UserValidator(IUserService userService) {
+    public UserValidator(IUserService userService, PasswordValidator passwordValidator) {
         this.userService = userService;
+        this.passwordValidator = passwordValidator;
     }
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return User.class.isAssignableFrom(clazz);
+        return UserDto.class.isAssignableFrom(clazz);
     }
 
     @Override
@@ -30,14 +31,12 @@ public class UserValidator implements Validator {
         }
 
         String password = userDto.getPassword();
-        if (!password.matches(".*[!@#$%^&*].*")
-                || !password.matches(".*[A-Z].*")
-                || !password.matches(".*[0-9].*")) {
+        if (!this.passwordValidator.isPasswordStrong(password)) {
             errors.rejectValue("password", "",
                     "password must contain at least 1 uppercase letter 1 specific character and 1 digit number");
         }
 
-        if (!password.equals(userDto.getConfirmedPassword())) {
+        if (!this.passwordValidator.isPasswordMatch(password, userDto.getConfirmedPassword())) {
             errors.rejectValue("confirmedPassword", "", "passwords do not match");
         }
     }

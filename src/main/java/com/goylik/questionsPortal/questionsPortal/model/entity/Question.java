@@ -1,7 +1,6 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
 import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

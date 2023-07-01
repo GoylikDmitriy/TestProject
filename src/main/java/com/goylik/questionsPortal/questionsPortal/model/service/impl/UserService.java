@@ -1,7 +1,9 @@
 package com.goylik.questionsPortal.questionsPortal.model.service.impl;
 
+import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.token.VerificationTokenDto;
+import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import com.goylik.questionsPortal.questionsPortal.model.entity.token.VerificationToken;
 import com.goylik.questionsPortal.questionsPortal.model.mapper.IUserMapper;
@@ -12,14 +14,12 @@ import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -43,6 +43,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public VerificationTokenDto getVerificationToken(String verificationToken) {
         VerificationToken token = this.tokenRepository.findByToken(verificationToken);
         VerificationTokenDto tokenDto = this.tokenMapper.map(token);
@@ -50,6 +51,7 @@ public class UserService implements IUserService {
     }
 
     @Override
+    @Transactional
     public void createVerificationToken(UserDto userDto, String token) {
         User user = this.userMapper.map(userDto);
         VerificationToken verificationToken = new VerificationToken(token, user);
@@ -97,8 +99,17 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void delete(UserDto userDto) {
-        userDto.getIncomingQuestions().forEach(q -> this.answerService.delete(q.getAnswer()));
+        List<QuestionDto> questions = userDto.getIncomingQuestions();
+        if (questions != null) {
+            questions.forEach(q -> this.answerService.delete(q.getAnswer()));
+        }
+
         User user = this.userMapper.map(userDto);
+        VerificationToken token = this.tokenRepository.findByUser(user);
+        if (token != null) {
+            this.tokenRepository.delete(token);
+        }
+
         this.userRepository.delete(user);
     }
 

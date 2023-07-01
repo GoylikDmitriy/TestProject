@@ -1,4 +1,4 @@
-package com.goylik.questionsPortal.questionsPortal.confirmation;
+package com.goylik.questionsPortal.questionsPortal.mail.confirmation;
 
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-public class MailConfirmationSender {
+public class MailRegistrationConfirmationSender {
     private IUserService userService;
     private JavaMailSender mailSender;
 
     @Autowired
-    public MailConfirmationSender(IUserService userService, JavaMailSender mailSender) {
+    public MailRegistrationConfirmationSender(IUserService userService, JavaMailSender mailSender) {
         this.userService = userService;
         this.mailSender = mailSender;
     }
@@ -26,10 +26,12 @@ public class MailConfirmationSender {
     @Value("${server.port}")
     private String port;
 
-    public void sendConformationToken(UserDto user, ConfirmationType confirmationType, String subject, String message) {
+    public void sendConfirmationToken(UserDto user) {
         String token = UUID.randomUUID().toString();
         this.userService.createVerificationToken(user, token);
-        String confirmationUrl = confirmationType.getAddress() + "?token=" + token;
+        String subject = "Registration Confirmation";
+        String message = "Confirm registration";
+        String confirmationUrl = "/registrationConfirm?token=" + token;
         SimpleMailMessage email = new SimpleMailMessage();
         email.setTo(user.getEmail());
         email.setSubject(subject);

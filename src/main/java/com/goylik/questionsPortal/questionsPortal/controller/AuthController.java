@@ -1,11 +1,11 @@
 package com.goylik.questionsPortal.questionsPortal.controller;
 
+import com.goylik.questionsPortal.questionsPortal.mail.notification.MailNotificationSender;
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.token.VerificationTokenDto;
 import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
 import com.goylik.questionsPortal.questionsPortal.util.UserValidator;
-import com.goylik.questionsPortal.questionsPortal.confirmation.ConfirmationType;
-import com.goylik.questionsPortal.questionsPortal.confirmation.MailConfirmationSender;
+import com.goylik.questionsPortal.questionsPortal.mail.confirmation.MailRegistrationConfirmationSender;
 import com.goylik.questionsPortal.questionsPortal.util.VerificationTokenValidator;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +20,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Calendar;
-
 @Controller
 public class AuthController {
     private final IUserService userService;
     private final UserValidator userValidator;
     private final VerificationTokenValidator tokenValidator;
-    private final MailConfirmationSender mailConfirmationSender;
+    private final MailRegistrationConfirmationSender mailConfirmationSender;
+    private final MailNotificationSender notificationSender;
 
     @Autowired
     public AuthController(IUserService userService, UserValidator userValidator,
-                          VerificationTokenValidator tokenValidator, MailConfirmationSender mailConfirmationSender) {
+                          VerificationTokenValidator tokenValidator,
+                          MailRegistrationConfirmationSender mailConfirmationSender,
+                          MailNotificationSender notificationSender) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.tokenValidator = tokenValidator;
         this.mailConfirmationSender = mailConfirmationSender;
+        this.notificationSender = notificationSender;
     }
 
     @GetMapping("/login")
@@ -64,8 +66,7 @@ public class AuthController {
         }
 
         userDto = this.userService.save(userDto);
-        this.mailConfirmationSender.sendConformationToken(userDto, ConfirmationType.REGISTRATION,
-                "Registration Confirmation", "Confirm registration");
+        this.mailConfirmationSender.sendConfirmationToken(userDto);
         return "redirect:/login";
     }
 
@@ -83,6 +84,7 @@ public class AuthController {
         UserDto user = verificationToken.getUser();
         user.setEnabled(true);
         this.userService.update(user);
+        this.notificationSender.send(user.getEmail(), "Your account has been created.");
         return "redirect:/login";
     }
 
@@ -90,8 +92,7 @@ public class AuthController {
     public String resendVerificationToken(@RequestParam("token") String token) {
         VerificationTokenDto verificationToken = this.userService.getVerificationToken(token);
         UserDto user = verificationToken.getUser();
-        this.mailConfirmationSender.sendConformationToken(user, ConfirmationType.REGISTRATION,
-                "Registration Confirmation", "Confirm registration");
+        this.mailConfirmationSender.sendConfirmationToken(user);
         return "redirect:/login";
     }
 

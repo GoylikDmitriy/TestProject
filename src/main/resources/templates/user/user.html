@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<div th:object="${user}">
+    <div>
+        <label> First name: <label th:text="${user.getFirstName()}"></label></label>
+    </div>
+    <div>
+        <label> Last name: <label th:text="${user.getLastName()}"></label></label>
+    </div>
+    <div>
+        <label> Email: <label th:text="${user.getEmail()}"></label></label>
+    </div>
+    <div>
+        <label> Phone number: <label th:text="${user.getPhoneNumber()}"></label></label>
+    </div>
+</div>
+</body>
+</html>

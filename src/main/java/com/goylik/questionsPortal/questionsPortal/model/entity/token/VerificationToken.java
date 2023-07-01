@@ -1,6 +1,6 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity.token;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
+import com.goylik.questionsPortal.questionsPortal.model.entity.BaseEntity;
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import jakarta.persistence.*;
 
