@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserDto {
     private Integer id;
@@ -113,5 +114,18 @@ public class UserDto {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(id, userDto.id) && Objects.equals(email, userDto.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email);
     }
 }

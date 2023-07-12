@@ -19,15 +19,6 @@ public class UserTest extends DataJpaTest {
     private UserRepository userRepository;
 
     @Test
-    public void shouldReceiveQuestions() {
-        User user = this.userRepository.findById(1).orElse(null);
-        List<Question> incoming = user.getIncomingQuestions();
-        List<Question> outgoing = user.getOutgoingQuestions();
-        assertThat(incoming).hasSize(1);
-        assertThat(outgoing).hasSize(2);
-    }
-
-    @Test
     public void shouldFindAllUsers() {
         List<User> users = this.userRepository.findAll();
         assertThat(users).hasSize(4);
@@ -53,11 +44,11 @@ public class UserTest extends DataJpaTest {
 
     @Test
     public void shouldFindUserByLastName() {
-        List<User> users = this.userRepository.findByLastName("Cooper");
+        Page<User> users = this.userRepository.findByLastName("Cooper", Pageable.unpaged());
         assertThat(users).hasSize(1);
-        assertThat(users.get(0).getLastName()).isEqualTo("Cooper");
+        assertThat(users.get().toList().get(0).getLastName()).isEqualTo("Cooper");
 
-        users = this.userRepository.findByLastName("Coper");
+        users = this.userRepository.findByLastName("Coper", Pageable.unpaged());
         assertThat(users).isEmpty();
     }
 

@@ -1,17 +1,9 @@
 package com.goylik.questionsPortal.questionsPortal.controller;
 
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
-import com.goylik.questionsPortal.questionsPortal.model.repository.AnswerRepository;
-import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
-import com.goylik.questionsPortal.questionsPortal.model.repository.UserRepository;
-import com.goylik.questionsPortal.questionsPortal.model.repository.VerificationTokenRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -19,20 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AuthController.class)
-public class AuthControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @MockBean
-    private JavaMailSender mailSender;
-    @MockBean
-    private UserRepository userRepository;
-    @MockBean
-    private AnswerRepository answerRepository;
-    @MockBean
-    private QuestionRepository questionRepository;
-    @MockBean
-    private VerificationTokenRepository tokenRepository;
-
+public class AuthControllerTest extends ControllerTest {
     private User user() {
         User user = new User("Denny", "Cooper", "denny.cooper@gmail.com",
                 "01234567", "880231243");

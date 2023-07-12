@@ -35,10 +35,26 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional(readOnly = true)
+    public Page<QuestionDto> getIncomingQuestionsByUserId(Integer id, Pageable pageable) {
+        Page<Question> questions = this.questionRepository.getIncomingQuestionsByUserId(id, pageable);
+        List<QuestionDto> questionDtoList = questions.stream().map(this.questionMapper::mapToShow).toList();
+        return new PageImpl<>(questionDtoList, pageable, questions.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<QuestionDto> getOutgoingQuestionsByUserId(Integer id, Pageable pageable) {
+        Page<Question> questions = this.questionRepository.getOutgoingQuestionsByUserId(id, pageable);
+        List<QuestionDto> questionDtoList = questions.stream().map(this.questionMapper::mapToShow).toList();
+        return new PageImpl<>(questionDtoList, pageable, questions.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public Page<AnswerOptionDto> findAllAnswerOptions(Pageable pageable) {
         Page<AnswerOption> options = this.questionRepository.findAllAnswerOptions(pageable);
-        Page<AnswerOptionDto> optionDtoList = new PageImpl<>(options.stream().map(this.optionMapper::map).toList());
-        return optionDtoList;
+        List<AnswerOptionDto> optionDtoList = options.stream().map(this.optionMapper::map).toList();
+        return new PageImpl<>(optionDtoList, pageable, options.getTotalElements());
     }
 
     @Override
@@ -60,14 +76,19 @@ public class QuestionService implements IQuestionService {
     public void update(QuestionDto questionDto) {
         if (questionDto.getAnswer() != null) {
             this.answerService.delete(questionDto.getAnswer());
-        }
-
-        if (questionDto.getOptions() != null) {
-            this.questionRepository.deleteAnswerOptionsByQuestionId(questionDto.getId());
-            questionDto.setOptions(null);
+            questionDto.setAnswer(null);
         }
 
         Question question = this.questionMapper.map(questionDto);
+        if (question.getOptions() != null) {
+            List<AnswerOption> options = question.getOptions();
+            options = options.stream()
+                    .filter(option -> !option.getOption().isEmpty())
+                    .toList();
+
+            question.setOptions(options);
+        }
+
         this.questionRepository.save(question);
     }
 
@@ -76,6 +97,15 @@ public class QuestionService implements IQuestionService {
     public QuestionDto save(QuestionDto questionDto) {
         Question question = this.questionMapper.map(questionDto);
         question = this.questionRepository.save(question);
+        if (question.getOptions() != null) {
+            List<AnswerOption> options = question.getOptions();
+            options = options.stream()
+                    .filter(option -> !option.getOption().isEmpty())
+                    .toList();
+
+            question.setOptions(options);
+        }
+
         return this.questionMapper.map(question);
     }
 
@@ -90,8 +120,8 @@ public class QuestionService implements IQuestionService {
     @Transactional(readOnly = true)
     public Page<QuestionDto> findAll(Pageable pageable) {
         Page<Question> questions = this.questionRepository.findAll(pageable);
-        Page<QuestionDto> questionDtoList = new PageImpl<>(questions.stream().map(this.questionMapper::map).toList());
-        return questionDtoList;
+        List<QuestionDto> questionDtoList = questions.stream().map(this.questionMapper::map).toList();
+        return new PageImpl<>(questionDtoList, pageable, questions.getTotalElements());
     }
 
     @Override

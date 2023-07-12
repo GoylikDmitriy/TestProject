@@ -1,5 +1,6 @@
 package com.goylik.questionsPortal.questionsPortal.model.service;
 
+import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.token.VerificationTokenDto;
 import org.springframework.data.domain.Page;
@@ -19,4 +20,5 @@ public interface IUserService {
 
     void createVerificationToken(UserDto user, String token);
     VerificationTokenDto getVerificationToken(String verificationToken);
+    VerificationTokenDto getVerificationToken(UserDto user);
 }

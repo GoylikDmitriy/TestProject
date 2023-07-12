@@ -11,7 +11,7 @@ import java.util.Calendar;
 @Entity
 @Table(name = "tokens")
 public class VerificationToken extends BaseEntity {
-    private static final int EXPIRATION = 60 * 24; // 24 hours.
+    private static final int EXPIRATION = 60 * 24;
     @Column(name = "token")
     private String token;
 

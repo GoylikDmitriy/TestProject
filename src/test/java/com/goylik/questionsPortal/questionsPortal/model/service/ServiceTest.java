@@ -41,7 +41,7 @@ public class ServiceTest extends DataJpaTest {
         this.userService.delete(user);
         Page<QuestionDto> questions = this.questionService.findAll(pageable);
 
-        assertThat(questions).hasSize(2);
+        assertThat(questions).hasSize(1);
         assertThat(this.questionService.findById(1)).isNull();
         assertThat(this.questionService.findById(4)).isNull();
     }

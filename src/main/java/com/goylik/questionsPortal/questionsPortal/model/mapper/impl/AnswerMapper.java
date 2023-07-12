@@ -12,6 +12,22 @@ public class AnswerMapper implements IAnswerMapper {
     private IQuestionMapper questionMapper;
 
     @Override
+    public AnswerDto mapToShow(AnswerDto dto) {
+        AnswerDto answerDto = null;
+        if (dto != null) {
+            answerDto = new AnswerDto();
+            answerDto.setId(dto.getId());
+            answerDto.setAnswer(dto.getAnswer());
+            answerDto.setQuestion(this.questionMapper
+                    .mapToShow(this.questionMapper
+                            .map(dto.getQuestion())
+                    ));
+        }
+
+        return answerDto;
+    }
+
+    @Override
     public AnswerDto map(Answer entity) {
         AnswerDto answerDto = null;
         if (entity != null) {

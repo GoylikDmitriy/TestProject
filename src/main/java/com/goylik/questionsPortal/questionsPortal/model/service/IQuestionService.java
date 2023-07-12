@@ -6,6 +6,7 @@ import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,4 +20,7 @@ public interface IQuestionService {
     void deleteAnswerOptionsByQuestionId(Integer id);
     Page<AnswerOptionDto> findAllAnswerOptions(Pageable pageable);
     List<AnswerOptionDto> findAllAnswerOptionsByQuestionId(Integer id);
+
+    Page<QuestionDto> getIncomingQuestionsByUserId(Integer id, Pageable pageable);
+    Page<QuestionDto> getOutgoingQuestionsByUserId(Integer id, Pageable pageable);
 }

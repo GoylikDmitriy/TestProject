@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class QuestionTest extends DataJpaTest {
 
     @Test
     public void shouldFindAllAnswerOptions() {
-        List<AnswerOption> options = this.questionRepository.findAllAnswerOptions();
+        Page<AnswerOption> options = this.questionRepository.findAllAnswerOptions(Pageable.unpaged());
         assertThat(options).hasSize(3);
     }
 

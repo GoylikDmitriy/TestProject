@@ -4,28 +4,16 @@ import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.token.VerificationTokenDto;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import java.util.Calendar;
 
 @Component
 public class VerificationTokenValidator {
-    public boolean isTokenNull(VerificationTokenDto token, Model model) {
-        if (token == null) {
-            model.addAttribute("message", "invalid token");
-        }
 
-        return token == null;
-    }
-
-    public boolean isTokenExpired(VerificationTokenDto token, Model model) {
+    public boolean isExpired(VerificationTokenDto token) {
         Calendar cal = Calendar.getInstance();
-        if ((token.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            model.addAttribute("message", "token is expired");
-            model.addAttribute("expired", true);
-            model.addAttribute("token", token.getToken());
-            return true;
-        }
-
-        return false;
+        return (token.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0;
     }
 }

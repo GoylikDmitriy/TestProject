@@ -59,8 +59,8 @@ public class AnswerService implements IAnswerService {
     @Transactional(readOnly = true)
     public Page<AnswerDto> findAll(Pageable pageable) {
         Page<Answer> answers = this.answerRepository.findAll(pageable);
-        Page<AnswerDto> answerDtoList = new PageImpl<>(answers.stream().map(this.answerMapper::map).toList());
-        return answerDtoList;
+        List<AnswerDto> answerDtoList = answers.stream().map(this.answerMapper::map).toList();
+        return new PageImpl<>(answerDtoList, pageable, answers.getTotalElements());
     }
 
     @Override

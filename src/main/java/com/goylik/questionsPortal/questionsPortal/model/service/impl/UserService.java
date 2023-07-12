@@ -3,7 +3,6 @@ package com.goylik.questionsPortal.questionsPortal.model.service.impl;
 import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.token.VerificationTokenDto;
-import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 import com.goylik.questionsPortal.questionsPortal.model.entity.token.VerificationToken;
 import com.goylik.questionsPortal.questionsPortal.model.mapper.IUserMapper;
@@ -25,21 +24,27 @@ import java.util.List;
 public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final VerificationTokenRepository tokenRepository;
-    private final AnswerService answerService;
     private final IUserMapper userMapper;
     private final IVerificationTokenMapper tokenMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(UserRepository userRepository, VerificationTokenRepository tokenRepository,
-                       AnswerService answerService, IUserMapper userMapper,
-                       IVerificationTokenMapper tokenMapper, PasswordEncoder passwordEncoder) {
+                       IUserMapper userMapper, IVerificationTokenMapper tokenMapper,
+                       PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
-        this.answerService = answerService;
         this.userMapper = userMapper;
         this.tokenMapper = tokenMapper;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public VerificationTokenDto getVerificationToken(UserDto user) {
+        VerificationToken token = this.tokenRepository.findByUser(this.userMapper.map(user));
+        VerificationTokenDto tokenDto = this.tokenMapper.map(token);
+        return tokenDto;
     }
 
     @Override
@@ -54,14 +59,19 @@ public class UserService implements IUserService {
     @Transactional
     public void createVerificationToken(UserDto userDto, String token) {
         User user = this.userMapper.map(userDto);
+        VerificationToken oldVerificationToken = this.tokenRepository.findByUser(user);
         VerificationToken verificationToken = new VerificationToken(token, user);
+        if (oldVerificationToken != null) {
+            verificationToken.setId(oldVerificationToken.getId());
+        }
+
         this.tokenRepository.save(verificationToken);
     }
 
     @Override
     @Transactional
     public boolean isEmailExist(String email) {
-        return this.userRepository.findByEmail(email) != null;
+        return email != null && this.userRepository.findByEmail(email) != null;
     }
 
     @Override
@@ -84,8 +94,8 @@ public class UserService implements IUserService {
     @Transactional
     public Page<UserDto> findByLastName(String lastName, Pageable pageable) {
         Page<User> users = this.userRepository.findByLastName(lastName, pageable);
-        Page<UserDto> userDtoPage = new PageImpl<>(users.stream().map(this.userMapper::map).toList());
-        return userDtoPage;
+        List<UserDto> userDtoPage = users.stream().map(this.userMapper::map).toList();
+        return new PageImpl<>(userDtoPage, pageable, users.getTotalElements());
     }
 
     @Override
@@ -99,11 +109,6 @@ public class UserService implements IUserService {
     @Override
     @Transactional
     public void delete(UserDto userDto) {
-        List<QuestionDto> questions = userDto.getIncomingQuestions();
-        if (questions != null) {
-            questions.forEach(q -> this.answerService.delete(q.getAnswer()));
-        }
-
         User user = this.userMapper.map(userDto);
         VerificationToken token = this.tokenRepository.findByUser(user);
         if (token != null) {
@@ -117,8 +122,8 @@ public class UserService implements IUserService {
     @Transactional(readOnly = true)
     public Page<UserDto> findAll(Pageable pageable) {
         Page<User> users = this.userRepository.findAll(pageable);
-        Page<UserDto> userDtoList = new PageImpl<>(users.stream().map(this.userMapper::map).toList());
-        return userDtoList;
+        List<UserDto> userDtoList = users.stream().map(this.userMapper::map).toList();
+        return new PageImpl<>(userDtoList, pageable, users.getTotalElements());
     }
 
     @Override

@@ -24,6 +24,30 @@ public class Question extends BaseEntity {
     @JoinColumn(name = "question_id")
     private List<AnswerOption> options;
 
+    @ManyToOne
+    @JoinColumn(name = "to_user_id")
+    private User toUser;
+
+    @ManyToOne
+    @JoinColumn(name = "from_user_id")
+    private User fromUser;
+
+    public User getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(User toUser) {
+        this.toUser = toUser;
+    }
+
+    public User getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(User fromUser) {
+        this.fromUser = fromUser;
+    }
+
     public Question() {}
 
     public Question(String question, AnswerType answerType) {

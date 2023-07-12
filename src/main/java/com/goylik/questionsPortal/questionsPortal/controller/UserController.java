@@ -2,11 +2,14 @@ package com.goylik.questionsPortal.questionsPortal.controller;
 
 import com.goylik.questionsPortal.questionsPortal.mail.notification.MailNotificationSender;
 import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
+import com.goylik.questionsPortal.questionsPortal.model.mapper.IUserMapper;
 import com.goylik.questionsPortal.questionsPortal.model.service.IUserService;
 import com.goylik.questionsPortal.questionsPortal.util.EditUserValidator;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,52 +17,50 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.HashMap;
+import java.util.List;
+
+@RestController
 @RequestMapping("/user")
 public class UserController {
     private final IUserService userService;
     private final EditUserValidator userValidator;
     private final PasswordEncoder passwordEncoder;
     private final MailNotificationSender notificationSender;
+    private final IUserMapper userMapper;
 
     @Autowired
     public UserController(IUserService userService, EditUserValidator userValidator,
-                          PasswordEncoder passwordEncoder, MailNotificationSender notificationSender) {
+                          PasswordEncoder passwordEncoder, MailNotificationSender notificationSender,
+                          IUserMapper userMapper) {
         this.userService = userService;
         this.userValidator = userValidator;
         this.passwordEncoder = passwordEncoder;
         this.notificationSender = notificationSender;
+        this.userMapper = userMapper;
     }
 
-    @GetMapping("/{id}")
-    public String show(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute("user", this.userService.findById(id));
-        return "user/user";
-    }
-
-    @GetMapping("/{id}/edit")
-    public String edit(@PathVariable("id") Integer id, Model model) {
+    @GetMapping
+    public UserDto getUser() {
         String authEmail = this.getEmailOfAuthenticatedUser();
-        UserDto user = this.userService.findById(id);
-        if (!user.getEmail().equals(authEmail)) {
-            return "redirect:/user/{id}";
-        }
-
-        model.addAttribute("user", user);
-        return "user/edit";
+        UserDto user = this.userService.findByEmail(authEmail);
+        user = this.userMapper.mapToEdit(user);
+        return user;
     }
 
-    @PostMapping("/{id}/edit")
-    public String edit(@PathVariable("id") Integer id,
-                       @ModelAttribute("user") @Valid UserDto userToUpdate, BindingResult bindingResult) {
+    @PostMapping("/edit")
+    public ResponseEntity<?> edit(@RequestBody @Valid UserDto userToUpdate, BindingResult bindingResult) {
+        String authEmail = this.getEmailOfAuthenticatedUser();
         this.userValidator.validate(userToUpdate, bindingResult);
         if (bindingResult.hasErrors()) {
-            return "user/edit";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(bindingResult.getFieldErrors());
         }
 
-        UserDto userDto = this.userService.findById(id);
+        UserDto userDto = this.userService.findByEmail(authEmail);
         String newPassword = userToUpdate.getConfirmedPassword();
         String password = newPassword.isEmpty() ? userDto.getPassword() : this.passwordEncoder.encode(newPassword);
 
@@ -68,34 +69,21 @@ public class UserController {
         userToUpdate.setIncomingQuestions(userDto.getIncomingQuestions());
         userToUpdate.setOutgoingQuestions(userDto.getOutgoingQuestions());
         this.userService.update(userToUpdate);
-        return "redirect:/user/{id}";
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Integer id, Model model) {
-        UserDto user = this.userService.findById(id);
-        if (user.getEmail().equals(this.getEmailOfAuthenticatedUser())) {
-            model.addAttribute("id", id);
-            return "user/delete";
-        }
-
-        return "redirect:/user/{id}";
-    }
-
-    @PostMapping("/{id}/delete")
-    public String delete(@PathVariable("id") Integer id, Model model, HttpSession session,
-                         @RequestParam("password") String password) {
-        UserDto user = this.userService.findById(id);
+    @PostMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody UserDto userDto) {
+        String password = userDto.getPassword();
+        String authEmail = this.getEmailOfAuthenticatedUser();
+        UserDto user = this.userService.findByEmail(authEmail);
         if (!this.passwordEncoder.matches(password, user.getPassword())) {
-            model.addAttribute("password", "wrong password");
-            return "user/delete";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("wrong password");
         }
 
-        String email = user.getEmail();
         this.userService.delete(user);
-        session.invalidate();
-        this.notificationSender.send(email, "Your account has been deleted.");
-        return "redirect:/sign-up";
+        this.notificationSender.send(authEmail, "Your account has been deleted");
+        return ResponseEntity.ok().body("Your account has been deleted");
     }
 
     private String getEmailOfAuthenticatedUser() {

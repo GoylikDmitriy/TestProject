@@ -7,16 +7,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MailNotificationSender {
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
     @Autowired
     public MailNotificationSender(JavaMailSender mailSender) {
         this.mailSender = mailSender;
     }
 
+
+    private static final String SUBJECT = "Questions Portal Notification";
+
     public void send(String email, String message) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setSubject("Questions Portal Notification");
+        mailMessage.setSubject(SUBJECT);
         mailMessage.setText(message);
         mailMessage.setTo(email);
         this.mailSender.send(mailMessage);

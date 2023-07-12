@@ -24,12 +24,10 @@ public class User extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "to_user_id")
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Question> incomingQuestions;
 
-    @OneToMany(cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
-    @JoinColumn(name = "from_user_id")
+    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Question> outgoingQuestions;
 
     @Column(name = "enabled")

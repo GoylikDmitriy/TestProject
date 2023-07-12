@@ -5,4 +5,6 @@ import com.goylik.questionsPortal.questionsPortal.model.entity.User;
 
 public interface IUserMapper extends ModelMapper<User, UserDto> {
     User mapToRegistration(UserDto dto);
+
+    UserDto mapToEdit(UserDto dto);
 }

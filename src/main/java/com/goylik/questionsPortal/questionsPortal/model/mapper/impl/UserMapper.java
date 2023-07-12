@@ -13,7 +13,25 @@ import java.util.List;
 
 @Component
 public class UserMapper implements IUserMapper {
+
     private IQuestionMapper questionMapper;
+
+    @Override
+    public UserDto mapToEdit(UserDto dto) {
+        UserDto userDto = null;
+        if (dto != null) {
+            userDto = new UserDto();
+            userDto.setId(dto.getId());
+            userDto.setEmail(dto.getEmail());
+            userDto.setFirstName(dto.getFirstName());
+            userDto.setLastName(dto.getLastName());
+            userDto.setPhoneNumber(dto.getPhoneNumber());
+            userDto.setPassword("");
+            userDto.setConfirmedPassword("");
+        }
+
+        return userDto;
+    }
 
     @Override
     public UserDto map(User entity) {

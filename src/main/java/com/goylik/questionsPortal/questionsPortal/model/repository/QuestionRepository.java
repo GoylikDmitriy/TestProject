@@ -14,9 +14,6 @@ import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query("SELECT option FROM AnswerOption")
-    List<AnswerOption> findAllAnswerOptions();
-
-    @Query("SELECT option FROM AnswerOption")
     Page<AnswerOption> findAllAnswerOptions(Pageable pageable);
 
     @Query("SELECT options FROM Question question WHERE question.id = :id")
@@ -28,4 +25,10 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     void deleteAnswerOptionsByQuestionId(@Param("id") Integer id);
 
     Page<Question> findAll(Pageable pageable);
+
+    @Query("SELECT q FROM User u JOIN u.incomingQuestions q WHERE u.id = :id")
+    Page<Question> getIncomingQuestionsByUserId(Integer id, Pageable pageable);
+
+    @Query("SELECT q FROM User u JOIN u.outgoingQuestions q WHERE u.id = :id")
+    Page<Question> getOutgoingQuestionsByUserId(Integer id, Pageable pageable);
 }
