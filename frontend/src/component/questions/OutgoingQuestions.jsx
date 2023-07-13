@@ -35,7 +35,7 @@ export default function OutgoingQuestions() {
         axios.get(`/questions/outgoing/${page}`,
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             })
             .then((res) => {
@@ -190,7 +190,7 @@ export default function OutgoingQuestions() {
             },
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             });
     }
@@ -230,7 +230,7 @@ export default function OutgoingQuestions() {
                 },
                 {
                     headers: {
-                        "Authorization": `username:${username};token:${token}`,
+                        "Authorization": token,
                     }
                 }
             );

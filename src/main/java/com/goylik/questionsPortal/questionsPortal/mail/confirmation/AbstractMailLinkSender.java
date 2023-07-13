@@ -9,7 +9,7 @@ public class AbstractMailLinkSender {
 
     @Value("${server.address}")
     protected String host;
-    @Value("3000")
+    @Value("${server.client-port}")
     protected String port;
 
     protected IUserService userService;
@@ -24,7 +24,7 @@ public class AbstractMailLinkSender {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(email);
         mailMessage.setSubject(subject);
-        mailMessage.setText(message + "\r\n" + "http://" + this.host + ":" + this.port + url);
+        mailMessage.setText(String.format("%s%nhttp://%s:%s%s", message, this.host, this.port, url));
         this.mailSender.send(mailMessage);
     }
 }

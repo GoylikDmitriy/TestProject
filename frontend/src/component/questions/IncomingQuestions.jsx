@@ -3,7 +3,7 @@ import axios from "axios";
 import AnswerQuestionModal from "./modal/AnswerQuestionModal";
 import InfoModal from "../modal/InfoModal";
 import SockJS from 'sockjs-client';
-import Stomp, {overWS} from 'stompjs';
+import Stomp from 'stompjs';
 import Header from "../common/Header";
 
 var stompClient;
@@ -29,7 +29,7 @@ export default function IncomingQuestions() {
         axios.get(`/questions/incoming/${page}`,
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             })
             .then((res) => {
@@ -158,7 +158,7 @@ export default function IncomingQuestions() {
             },
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             }
         );
@@ -177,7 +177,7 @@ export default function IncomingQuestions() {
                 },
                 {
                     headers: {
-                        "Authorization": `username:${username};token:${token}`,
+                        "Authorization": token,
                     }
                 }
             );

@@ -40,6 +40,12 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public UserDto getUserByToken(String token) {
+        User user = this.tokenRepository.findUserByToken(token);
+        return this.userMapper.map(user);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public VerificationTokenDto getVerificationToken(UserDto user) {
         VerificationToken token = this.tokenRepository.findByUser(this.userMapper.map(user));

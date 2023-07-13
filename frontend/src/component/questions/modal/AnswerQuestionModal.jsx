@@ -7,7 +7,6 @@ import ConfirmationModal from "../../modal/ConfirmationModal";
 import InfoModal from "../../modal/InfoModal";
 
 const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDelete}) => {
-    const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
 
     const [types, setTypes] = useState(['']);
@@ -30,7 +29,12 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
 
 
     useEffect(() => {
-        axios.get('/questions/answer-types')
+        axios.get('/questions/answer-types',
+            {
+                headers: {
+                    "Authorization": token,
+                }
+            })
             .then((res) => {
                 setTypes(res.data);
             })
@@ -44,7 +48,7 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
         const response = await axios.get(`/questions/get/${questionId}`,
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             });
 

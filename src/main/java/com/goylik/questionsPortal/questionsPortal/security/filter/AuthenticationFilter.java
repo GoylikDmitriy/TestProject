@@ -18,11 +18,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private IUserService userService;
+    private final List<String> unauthURLs = Arrays.asList(
+            "/login", "/sign-up","/error", "/reset-password", "/forgot-password",
+            "/registrationConfirm", "/resendVerificationToken", "/ws"
+    );
 
     @Lazy
     @Autowired
@@ -33,14 +39,17 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-        if (header != null) {
-            String username = header.split(";")[0].split(":")[1];
-            String token = header.split(";")[1].split(":")[1];
-            if (username != null) {
-                UserDto userDto = userService.findByEmail(username);
-                VerificationTokenDto tokenDto = userService.getVerificationToken(userDto);
-                if (tokenDto != null && tokenDto.getToken().equals(token)) {
+        String requestUri = request.getRequestURI();
+        String uri = String.format("/%s", requestUri.split("/")[1]);
+        String token = request.getHeader("Authorization");
+        if (!this.unauthURLs.contains(uri)) {
+            if (token == null) {
+                response.setStatus(401);
+                return;
+            } else {
+                VerificationTokenDto tokenDto = userService.getVerificationToken(token);
+                UserDto userDto = userService.getUserByToken(token);
+                if (tokenDto != null) {
                     UserDetails userDetails = new UserDetailsImpl(userDto);
                     Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getPassword());
                     SecurityContextHolder.getContext().setAuthentication(authentication);

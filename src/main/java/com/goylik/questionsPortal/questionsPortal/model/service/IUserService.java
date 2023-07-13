@@ -18,6 +18,7 @@ public interface IUserService {
     UserDto findByEmail(String email);
     boolean isEmailExist(String email);
 
+    UserDto getUserByToken(String token);
     void createVerificationToken(UserDto user, String token);
     VerificationTokenDto getVerificationToken(String verificationToken);
     VerificationTokenDto getVerificationToken(UserDto user);

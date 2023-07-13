@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 
 const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, onClose }) => {
-    const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
 
     const [types, setTypes] = useState(['']);
@@ -17,7 +16,12 @@ const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, 
     const [answer, setAnswer] = useState('');
 
     useEffect(() => {
-        axios.get('/questions/answer-types')
+        axios.get('/questions/answer-types',
+            {
+                headers: {
+                    "Authorization": token,
+                }
+            })
             .then((res) => {
                 setTypes(res.data);
             })
@@ -31,7 +35,7 @@ const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, 
         const response = await axios.get(`/questions/get/${questionId}`,
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             });
 

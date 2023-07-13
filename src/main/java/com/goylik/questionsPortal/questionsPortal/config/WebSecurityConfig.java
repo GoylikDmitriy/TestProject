@@ -26,7 +26,8 @@ import java.util.Arrays;
 public class WebSecurityConfig {
     @Value("${server.address}")
     private String host;
-    private String port = "3000";
+    @Value("${server.client-port}")
+    private String port;
 
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationSuccessHandler authenticationSuccessHandler;
@@ -57,7 +58,7 @@ public class WebSecurityConfig {
         return http
                 .cors(cors -> cors.configurationSource(request -> {
                     CorsConfiguration config = new CorsConfiguration();
-                    config.setAllowedOrigins(Arrays.asList("http://" + host + ":" + port));
+                    config.setAllowedOrigins(Arrays.asList(String.format("http://%s:%s", host, port)));
                     config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
                     config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-XSRF-TOKEN"));
                     config.setAllowCredentials(true);

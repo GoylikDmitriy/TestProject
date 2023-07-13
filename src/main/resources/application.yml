@@ -13,3 +13,4 @@ spring:
 server:
   address: localhost
   port: 8080
+  client-port: 3000

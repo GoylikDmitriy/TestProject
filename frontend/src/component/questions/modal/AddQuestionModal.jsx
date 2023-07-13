@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from "axios";
 
 const AddQuestionModal = ({ toUserError, questionError, optionsError, onSubmit, onClose }) => {
+    const token = localStorage.getItem('token');
     const [types, setTypes] = useState(['']);
 
     const [email, setEmail] = useState('');
@@ -12,7 +13,10 @@ const AddQuestionModal = ({ toUserError, questionError, optionsError, onSubmit, 
     const [selectedOption, setSelectedOption] = useState('');
 
     useEffect(() => {
-        axios.get('/questions/answer-types')
+        axios.get('/questions/answer-types', {
+            headers: {
+                "Authorization": token,
+            }})
             .then((res) => {
                 setTypes(res.data);
                 setAnswerType(res.data[0]);

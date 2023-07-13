@@ -1,12 +1,11 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import InfoModal from "../modal/InfoModal";
 import Header from "../common/Header";
 
 export default function EditUser() {
-    const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
 
     let navigate = useNavigate();
@@ -50,7 +49,7 @@ export default function EditUser() {
                 user,
                 {
                     headers: {
-                        "Authorization": `username:${username};token:${token}`,
+                        "Authorization": token,
                     }
                 });
 
@@ -105,7 +104,7 @@ export default function EditUser() {
         const response = await axios.get(`/user`,
             {
                 headers: {
-                    "Authorization": `username:${username};token:${token}`,
+                    "Authorization": token,
                 }
             });
 

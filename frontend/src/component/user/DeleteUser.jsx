@@ -9,7 +9,6 @@ import Header from "../common/Header";
 export default function DeleteUser() {
     const navigate = useNavigate();
 
-    const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     const [password, setPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
@@ -31,7 +30,7 @@ export default function DeleteUser() {
                 },
                 {
                     headers: {
-                        "Authorization": `username:${username};token:${token}`,
+                        "Authorization": token,
                     }
                 });
 

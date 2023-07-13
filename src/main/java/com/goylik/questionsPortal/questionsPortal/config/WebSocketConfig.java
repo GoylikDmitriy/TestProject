@@ -12,12 +12,13 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Value("${server.address}")
     private String host;
-    private String port = "3000";
+    @Value("${server.client-port}")
+    private String port;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://" + host + ":" + port)
+                .setAllowedOrigins(String.format("http://%s:%s", host, port))
                 .withSockJS();
     }
 
