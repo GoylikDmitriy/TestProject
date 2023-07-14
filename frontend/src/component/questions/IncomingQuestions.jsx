@@ -109,6 +109,10 @@ export default function IncomingQuestions() {
     }
 
     const answerQuestionSubmit = async (isEditMode, answer) => {
+        if (answerError) {
+            setAnswerError('');
+        }
+
         let url = '/answer';
         let message;
         if (isEditMode) {
@@ -135,6 +139,8 @@ export default function IncomingQuestions() {
                 setMessageInfo(message)
                 setIsInfoModalOpen(true);
             }
+
+            setIsAnswerModalOpen(Array(questions.length).fill(false));
         } catch (error) {
             if (error.response?.status === 400) {
                 setAnswerError(error.response.data);
@@ -143,7 +149,6 @@ export default function IncomingQuestions() {
             console.log(error);
         }
 
-        setIsAnswerModalOpen(Array(questions.length).fill(false));
     }
 
     const sendAnswerRequest = async (url, answer) => {
@@ -155,6 +160,7 @@ export default function IncomingQuestions() {
                 question: {
                     id: answer.questionId,
                 },
+                options: answer.answerOptions,
             },
             {
                 headers: {
@@ -226,7 +232,7 @@ export default function IncomingQuestions() {
                                 <tr key={q.id}>
                                     <td>{q.fromUser.email}</td>
                                     <td>{q.question}</td>
-                                    <td>{q.answer ? q.answer.answer : ""}</td>
+                                    <td style={{ whiteSpace: "pre-line" }}>{q.answer ? q.answer.answer : ""}</td>
                                     <td>
                                         <div className="btn-group">
                                             <button className="btn btn-primary"
@@ -243,10 +249,11 @@ export default function IncomingQuestions() {
                                                     <AnswerQuestionModal answerError={answerError}
                                                                          questionId={q.id}
                                                                          onSubmit={answerQuestionSubmit}
-                                                                         onClose={() =>
+                                                                         onClose={() =>{
+                                                                             setAnswerError('')
                                                                              setIsAnswerModalOpen(Array(questions.length)
                                                                                  .fill(false)
-                                                                             )}
+                                                                             )}}
                                                                          onDelete={deleteHandler}
                                                     />
                                                 </div>)}

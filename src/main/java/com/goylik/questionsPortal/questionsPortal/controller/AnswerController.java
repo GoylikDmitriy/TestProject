@@ -1,6 +1,7 @@
 package com.goylik.questionsPortal.questionsPortal.controller;
 
 import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerDto;
+import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
 import com.goylik.questionsPortal.questionsPortal.model.mapper.IAnswerMapper;
 import com.goylik.questionsPortal.questionsPortal.model.service.IAnswerService;
@@ -11,10 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/answer")
@@ -31,6 +31,11 @@ public class AnswerController {
         this.questionService = questionService;
         this.answerMapper = answerMapper;
         this.messagingTemplate = messagingTemplate;
+    }
+
+    @GetMapping("/options")
+    public List<AnswerOptionDto> getOptions(@RequestBody AnswerDto answerDto) {
+        return this.answerService.getOptions(answerDto);
     }
 
     @PostMapping("/delete")
@@ -59,7 +64,7 @@ public class AnswerController {
         QuestionDto questionDto = this.questionService.findById(answerDto.getQuestion().getId());
         answerDto.setQuestion(questionDto);
         answerDto = this.answerService.save(answerDto);
-        return ResponseEntity.ok().body(answerDto);
+        return ResponseEntity.ok().body(this.answerMapper.mapToShow(answerDto));
     }
 
     @MessageMapping("/answer")

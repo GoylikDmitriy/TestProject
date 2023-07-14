@@ -16,7 +16,14 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
     const [answerType, setAnswerType] = useState('');
     const [answer, setAnswer] = useState('');
     const [answerId, setAnswerId] = useState(null);
-    const [options, setOptions] = useState(['']);
+    const [answerOptions, setAnswerOptions] = useState([{
+        id:'',
+        option:'',
+    }]);
+    const [options, setOptions] = useState([{
+        id: '',
+        option: '',
+    }]);
 
     const [isAnswerSet, setIsAnswerSet] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
@@ -58,9 +65,10 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
         const ans = response.data.answer;
         setAnswer(ans ? ans.answer : '');
         setAnswerId(ans ? ans.id : null);
+        setAnswerOptions(ans?.options ? ans.options : []);
         setIsAnswerSet(ans);
 
-        setOptions(response.data.options.map(option => option.option));
+        setOptions(response.data.options);
     }
 
     useEffect(() => {
@@ -105,12 +113,15 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
                                     <input
                                         type="radio"
                                         name={id}
-                                        value={option}
-                                        checked={answer === option}
-                                        onChange={onChange}
+                                        value={option.option}
+                                        checked={answer === option.option}
+                                        onChange={(e) => {
+                                            setAnswerOptions(Array.of(option));
+                                            onChange(e);
+                                        }}
                                         className="form-check-input mr-1"
                                     />
-                                    {option}
+                                    {option.option}
                                 </label>
                             </div>
                         ))}
@@ -125,23 +136,33 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
                                     <input
                                         type="checkbox"
                                         name={id}
-                                        value={option}
-                                        checked={answer.includes(option)}
+                                        value={option.option}
+                                        checked={answer.split('\n').includes(option.option)}
                                         onChange={(e) => {
                                             const checked = e.target.checked;
                                             let updatedAnswer = answer;
+                                            let newOptions = answerOptions;
+
+                                            if (updatedAnswer.length !== 0 && !updatedAnswer.endsWith('\n')) {
+                                                updatedAnswer += '\n';
+                                            }
 
                                             if (checked) {
-                                                updatedAnswer += option + '\n';
+                                                updatedAnswer += option.option + '\n';
+                                                //setAnswerOptions(prevOptions => [...prevOptions, option]);
+                                                newOptions.push(option);
                                             } else {
-                                                updatedAnswer = updatedAnswer.replace(option + '\n', '');
+                                                updatedAnswer = updatedAnswer
+                                                    .replace(option.option + '\n', '');
+                                                newOptions = newOptions.filter(op => op.id !== option.id);
                                             }
 
                                             setAnswer(updatedAnswer);
+                                            setAnswerOptions(newOptions)
                                         }}
                                         className="form-check-input mr-1"
                                     />
-                                    {option}
+                                    {option.option}
                                 </label>
                             </div>
                         ))}
@@ -154,11 +175,15 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
                             id={id}
                             className={formControl}
                             value={answer}
-                            onChange={onChange}
+                            onChange={(e) => {
+                                const optionId = e.target.options[e.target.selectedIndex].getAttribute("data-key");
+                                setAnswerOptions(Array.of({ id: optionId, option: e.target.value }));
+                                onChange(e);
+                            }}
                         >
                             {options.map((option, index) => (
-                                <option key={index} value={option}>
-                                    {option}
+                                <option key={index} value={option.option} data-key={option.id}>
+                                    {option.option}
                                 </option>
                             ))}
                         </select>
@@ -231,6 +256,7 @@ const AnswerQuestionModal = ({answerError, questionId, onSubmit, onClose, onDele
                                                 {
                                                     id: answerId,
                                                     answer: answer,
+                                                    answerOptions: answerOptions.length === 0 ? null : answerOptions,
                                                     questionId: questionId,
                                                 });
 

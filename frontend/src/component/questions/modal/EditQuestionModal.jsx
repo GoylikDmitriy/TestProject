@@ -10,7 +10,10 @@ const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, 
 
     const [question, setQuestion] = useState('');
     const [answerType, setAnswerType] = useState('');
-    const [options, setOptions] = useState([]);
+    const [options, setOptions] = useState([{
+        id: '',
+        option: ''
+    }]);
     const [optionsValue, setOptionsValue] = useState('');
     const [email, setEmail] = useState('');
     const [answer, setAnswer] = useState('');
@@ -43,13 +46,14 @@ const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, 
         setQuestion(response.data.question);
         setAnswerType(response.data.answerType);
         setAnswer(response.data.answer);
+        setOptions(response.data.options);
 
-        const optionsData = response.data.options;
-        for (let i = 0; i < optionsData.length; i++) {
-            options.push(optionsData[i].option);
-        }
-
-        setOptionsValue(options.join('\n'));
+        //setOptionsValue(options.join('\n'));
+        response.data.options.forEach(option => {
+            setOptionsValue(prevState => prevState ?
+                prevState + '\n' + option.option :
+                prevState + option.option);
+        });
     }
 
     useEffect(() => {
@@ -72,8 +76,28 @@ const EditQuestionModal = ({ questionId, questionError, optionsError, onSubmit, 
     const getTypeValue = (answerType) => types.indexOf(answerType) + 1;
 
     const getOptions = (optionsValue) => {
+        let updatedOptions = [{
+            id: '',
+            option: '',
+        }];
+
         if (selectedOption === '3' || selectedOption === '4' || selectedOption === '5') {
-            return optionsValue ? optionsValue.split('\n') : null;
+            if (optionsValue) {
+                const splitOptions = optionsValue.split('\n');
+                for (let i = 0; i < splitOptions.length; i++) {
+                    let id = null;
+                    if (i < options.length) {
+                        id = options[i].id;
+                    }
+
+                    updatedOptions[i] = { id:id, option:splitOptions[i] };
+                }
+            }
+            else {
+                updatedOptions = null;
+            }
+
+            return updatedOptions;
         }
 
         return null;

@@ -76,8 +76,8 @@ public class QuestionController {
         question.setQuestion(questionToUpdate.getQuestion());
         question.setAnswerType(questionToUpdate.getAnswerType());
         question.setOptions(questionToUpdate.getOptions());
-        this.questionService.update(question);
-        return ResponseEntity.ok().body(question);
+        question = this.questionService.update(question);
+        return ResponseEntity.ok().body(this.questionMapper.mapToShow(this.questionMapper.map(question)));
     }
 
     @PostMapping("/add")

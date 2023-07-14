@@ -15,7 +15,7 @@ public interface IQuestionService {
     Page<QuestionDto> findAll(Pageable pageable);
     QuestionDto findById(Integer id);
     QuestionDto save(QuestionDto question);
-    void update(QuestionDto question);
+    QuestionDto update(QuestionDto question);
     void delete(QuestionDto question);
     void deleteAnswerOptionsByQuestionId(Integer id);
     Page<AnswerOptionDto> findAllAnswerOptions(Pageable pageable);

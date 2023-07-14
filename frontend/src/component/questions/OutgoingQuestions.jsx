@@ -121,7 +121,23 @@ export default function OutgoingQuestions() {
     const addQuestionSubmit = async (question, clearData) => {
         try {
             const response =
-                await sendQuestionRequest('/questions/add', question);
+                await axios.post(
+                    '/questions/add',
+                    {
+                        id: null,
+                        question: question.question,
+                        answerType: question.answerType,
+                        options: getOptions(question),
+                        answer: question.answer ? question.answer : null,
+                        toUser: {
+                            email: question.email,
+                        },
+                    },
+                    {
+                        headers: {
+                            "Authorization": token,
+                        }
+                    });
             if (response.status === 200) {
                 const newQuestion = response.data;
                 if (stompClient) {
@@ -151,7 +167,23 @@ export default function OutgoingQuestions() {
     const editQuestionSubmit = async (question) => {
         try {
             const response =
-                await sendQuestionRequest('/questions/edit', question);
+                await axios.post(
+                    '/questions/edit',
+                    {
+                        id: question.id,
+                        question: question.question,
+                        answerType: question.answerType,
+                        options: question.options,
+                        answer: question.answer ? question.answer : null,
+                        toUser: {
+                            email: question.email,
+                        },
+                    },
+                    {
+                        headers: {
+                            "Authorization": token,
+                        }
+                    });
             if (response.status === 200) {
                 const newQuestion = response.data;
                 if (stompClient) {
@@ -173,26 +205,6 @@ export default function OutgoingQuestions() {
 
             console.log(error);
         }
-    }
-
-    const sendQuestionRequest = async (url, question) => {
-        return await axios.post(
-            url,
-            {
-                id: question.id ? question.id : null,
-                question: question.question,
-                answerType: question.answerType,
-                options: getOptions(question),
-                answer: question.answer ? question.answer : null,
-                toUser: {
-                    email: question.email,
-                },
-            },
-            {
-                headers: {
-                    "Authorization": token,
-                }
-            });
     }
 
     const handleErrors = (errors) => {
@@ -290,7 +302,7 @@ export default function OutgoingQuestions() {
                                     <td>{q.toUser.email}</td>
                                     <td>{q.question}</td>
                                     <td>{q.answerType}</td>
-                                    <td>{q.answer ? q.answer.answer : ""}</td>
+                                    <td style={{ whiteSpace: "pre-line" }}>{q.answer ? q.answer.answer : ""}</td>
                                     <td>
                                         <div className="btn-group">
                                             <button className="btn btn-primary"

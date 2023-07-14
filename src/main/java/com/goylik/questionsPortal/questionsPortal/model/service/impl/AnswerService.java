@@ -1,10 +1,12 @@
 package com.goylik.questionsPortal.questionsPortal.model.service.impl;
 
 import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerDto;
-import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
+import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Answer;
+import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.mapper.IAnswerMapper;
+import com.goylik.questionsPortal.questionsPortal.model.mapper.IAnswerOptionMapper;
 import com.goylik.questionsPortal.questionsPortal.model.repository.AnswerRepository;
 import com.goylik.questionsPortal.questionsPortal.model.repository.QuestionRepository;
 import com.goylik.questionsPortal.questionsPortal.model.service.IAnswerService;
@@ -22,12 +24,22 @@ public class AnswerService implements IAnswerService {
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
     private final IAnswerMapper answerMapper;
+    private final IAnswerOptionMapper optionMapper;
 
     @Autowired
-    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository, IAnswerMapper answerMapper) {
+    public AnswerService(AnswerRepository answerRepository, QuestionRepository questionRepository,
+                         IAnswerMapper answerMapper, IAnswerOptionMapper optionMapper) {
         this.answerRepository = answerRepository;
         this.questionRepository = questionRepository;
         this.answerMapper = answerMapper;
+        this.optionMapper = optionMapper;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<AnswerOptionDto> getOptions(AnswerDto answerDto) {
+        List<AnswerOption> options = this.answerRepository.findAnswerOptionsByAnswerId(answerDto.getId());
+        return options.stream().map(this.optionMapper::map).toList();
     }
 
     @Override

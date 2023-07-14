@@ -27,7 +27,7 @@ public class QuestionMapper implements IQuestionMapper {
             questionDto.setId(entity.getId());
             questionDto.setQuestion(entity.getQuestion());
             questionDto.setAnswerType(entity.getAnswerType());
-            questionDto.setOptions(entity.getOptions().stream().map(this.optionMapper::map).toList());
+            questionDto.setOptions(this.convertOptions(entity.getOptions()));
             questionDto.setAnswer(convertAnswerToShowQuestion(entity.getAnswer()));
             questionDto.setFromUser(convertUser(entity.getFromUser()));
             questionDto.setToUser(convertUser(entity.getToUser()));
@@ -98,6 +98,7 @@ public class QuestionMapper implements IQuestionMapper {
             answerDto = new AnswerDto();
             answerDto.setId(answer.getId());
             answerDto.setAnswer(answer.getAnswer());
+            answerDto.setOptions(this.convertOptions(answer.getOptions()));
             answerDto.setQuestion(questionDto);
         }
 
@@ -110,6 +111,7 @@ public class QuestionMapper implements IQuestionMapper {
             answer = new Answer();
             answer.setId(answerDto.getId());
             answer.setAnswer(answerDto.getAnswer());
+            answer.setOptions(this.convertOptionDtoList(answerDto.getOptions()));
             answer.setQuestion(question);
         }
 
@@ -122,6 +124,7 @@ public class QuestionMapper implements IQuestionMapper {
             answerDto = new AnswerDto();
             answerDto.setId(answer.getId());
             answerDto.setAnswer(answer.getAnswer());
+            answerDto.setOptions(this.convertOptions(answer.getOptions()));
         }
 
         return answerDto;

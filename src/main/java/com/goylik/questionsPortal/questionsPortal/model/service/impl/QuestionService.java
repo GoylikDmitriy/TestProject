@@ -1,7 +1,10 @@
 package com.goylik.questionsPortal.questionsPortal.model.service.impl;
 
+import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
+import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.AnswerOptionDto;
 import com.goylik.questionsPortal.questionsPortal.model.dto.QuestionDto;
+import com.goylik.questionsPortal.questionsPortal.model.entity.Answer;
 import com.goylik.questionsPortal.questionsPortal.model.entity.AnswerOption;
 import com.goylik.questionsPortal.questionsPortal.model.entity.Question;
 import com.goylik.questionsPortal.questionsPortal.model.mapper.IAnswerOptionMapper;
@@ -15,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class QuestionService implements IQuestionService {
@@ -73,23 +79,58 @@ public class QuestionService implements IQuestionService {
 
     @Override
     @Transactional
-    public void update(QuestionDto questionDto) {
-        if (questionDto.getAnswer() != null) {
+    public QuestionDto update(QuestionDto questionDto) {
+        if (questionDto.getOptions() != null) {
+            List<AnswerOptionDto> options = questionDto.getOptions();
+            options = options.stream()
+                    .filter(option -> !option.getOption().isEmpty())
+                    .toList();
+
+            questionDto.setOptions(options);
+            AnswerDto answer = questionDto.getAnswer();
+            if (answer != null) {
+                this.updateAnswerWithOptions(answer, options);
+                questionDto.setAnswer(answer);
+            }
+        }
+        else {
             this.answerService.delete(questionDto.getAnswer());
             questionDto.setAnswer(null);
         }
 
         Question question = this.questionMapper.map(questionDto);
-        if (question.getOptions() != null) {
-            List<AnswerOption> options = question.getOptions();
-            options = options.stream()
-                    .filter(option -> !option.getOption().isEmpty())
-                    .toList();
+        return this.questionMapper.map(this.questionRepository.save(question));
+    }
 
-            question.setOptions(options);
+    private void updateAnswerWithOptions(AnswerDto answer, List<AnswerOptionDto> options) {
+        if (answer != null && answer.getOptions() != null) {
+            List<AnswerOptionDto> newAnswerOptions = new ArrayList<>();
+            List<AnswerOptionDto> answerOptions = answer.getOptions();
+            StringBuilder stringAnswer = new StringBuilder();
+            for (AnswerOptionDto option : options) {
+                for (AnswerOptionDto answerOption : answerOptions) {
+                    if (Objects.equals(option.getId(), answerOption.getId())) {
+                        if (stringAnswer.isEmpty()) {
+                            stringAnswer.append(option.getOption());
+                        } else {
+                            stringAnswer.append("\n").append(option.getOption());
+                        }
+
+                        newAnswerOptions.add(option);
+                        break;
+                    }
+                }
+            }
+
+            answer.setOptions(newAnswerOptions);
+            answer.setAnswer(stringAnswer.toString());
+            if (stringAnswer.isEmpty()) {
+                this.answerService.delete(answer);
+                answer = null;
+            } else {
+                this.answerService.update(answer);
+            }
         }
-
-        this.questionRepository.save(question);
     }
 
     @Override
