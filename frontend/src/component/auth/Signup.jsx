@@ -91,95 +91,103 @@ export default function Signup() {
     const {firstName, lastName, email, password, confirmedPassword, phoneNumber} = user;
 
     return (
-        <div className="container">
-            <h2>Sign Up</h2>
+        <div className="container" style={{ width: 500 }}>
+            <h2 className="text-center">Sign Up</h2>
             <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="firstName" className="form-label">First name</label>
+                <div className="mb-3 form-floating">
                     <input
                         type="text"
-                        className="form-control"
+                        className={`form-control ${firstNameError ? 'is-invalid' : ''}`}
                         id="firstName"
                         name="firstName"
                         value={firstName}
+                        placeholder="First name"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{firstNameError}</div>
+                    <label htmlFor="firstName" className="form-label">First name</label>
+                    {firstNameError && <div className="invalid-feedback">{firstNameError}</div>}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="lastName" className="form-label">Last name</label>
+                <div className="mb-3 form-floating">
                     <input
                         type="text"
-                        className="form-control"
+                        className={`form-control ${lastNameError ? 'is-invalid' : ''}`}
                         id="lastName"
                         name="lastName"
                         value={lastName}
+                        placeholder="Last name"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{lastNameError}</div>
+                    <label htmlFor="lastName" className="form-label">Last name</label>
+                    {lastNameError && <div className="invalid-feedback">{lastNameError}</div>}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">Email</label>
+                <div className="mb-3 form-floating">
                     <input
                         type="email"
-                        className="form-control"
+                        className={`form-control ${emailError ? 'is-invalid' : ''}`}
                         id="email"
                         name="email"
                         value={email}
+                        placeholder="Email"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{emailError}</div>
+                    <label htmlFor="email" className="form-label">Email</label>
+                    {emailError && <div className="invalid-feedback">{emailError}</div>}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="phoneNumber" className="form-label">Phone number</label>
+                <div className="mb-3 form-floating">
                     <input
-                        type="text"
-                        className="form-control"
+                        type="tel"
+                        className={`form-control ${phoneNumberError ? 'is-invalid' : ''}`}
                         id="phoneNumber"
                         name="phoneNumber"
                         value={phoneNumber}
+                        placeholder="Phone number"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{phoneNumberError}</div>
+                    <label htmlFor="phoneNumber" className="form-label">Phone number</label>
+                    {phoneNumberError && <div className="invalid-feedback">{phoneNumberError}</div>}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="password" className="form-label">Password</label>
+                <div className="mb-3 form-floating">
                     <input
                         type="password"
-                        className="form-control"
+                        className={`form-control ${passwordError ? 'is-invalid' : ''}`}
                         id="password"
                         name="password"
                         value={password}
+                        placeholder="Password"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{passwordError}</div>
+                    <label htmlFor="password" className="form-label">Password</label>
+                    {passwordError && <div className="invalid-feedback">{passwordError}</div>}
                 </div>
-                <div className="mb-3">
-                    <label htmlFor="confirmedPassword" className="form-label">Confirm password</label>
+                <div className="mb-3 form-floating">
                     <input
                         type="password"
-                        className="form-control"
+                        className={`form-control ${confirmedPasswordError ? 'is-invalid' : ''}`}
                         id="confirmedPassword"
                         name="confirmedPassword"
                         value={confirmedPassword}
+                        placeholder="Confirm password"
                         onChange={handleInputChange}
                     />
-                    <div className="text-danger">{confirmedPasswordError}</div>
+                    <label htmlFor="confirmedPassword" className="form-label">Confirm password</label>
+                    {confirmedPasswordError && <div className="invalid-feedback">{confirmedPasswordError}</div>}
                 </div>
-                <div>
-                    <button type="submit" className="btn btn-primary">Sign up</button>
+                <div className="text-center">
+                    <button type="submit" className="btn btn-primary w-100">Sign up</button>
                 </div>
-                <div>
-                    <a href={'/login'}>Already have account</a>
+                <div className="text-center mt-3">
+                    <a href="/login">Already have an account</a>
                 </div>
             </form>
             {isInfoModalOpen && (
                 <div>
-                    <InfoModal message={messageInfo}
-                               onClose={() => {
-                                   setIsInfoModalOpen(false);
-                                   navigate(`/token/${token}`, {state: {allowed:true}});
-                               }}/>
+                    <InfoModal
+                        message={messageInfo}
+                        onClose={() => {
+                            setIsInfoModalOpen(false);
+                            navigate(`/token/${token}`, { state: { allowed: true } });
+                        }}
+                    />
                 </div>
             )}
         </div>

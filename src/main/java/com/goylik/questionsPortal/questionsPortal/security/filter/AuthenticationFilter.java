@@ -26,7 +26,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
 
     private IUserService userService;
     private final List<String> unauthURLs = Arrays.asList(
-            "/login", "/sign-up","/error", "/reset-password", "/forgot-password",
+            "/login", "/signup", "/isConfirmed", "/reset-password", "/forgot-password",
             "/registrationConfirm", "/resendVerificationToken", "/ws"
     );
 

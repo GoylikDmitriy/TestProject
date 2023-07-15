@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +75,7 @@ public class ServiceTest extends DataJpaTest {
         Page<QuestionDto> questions = this.questionService.findAll(pageable);
         QuestionDto question = this.questionService.findById(1);
 
-        assertThat(questions).hasSize(4);
+        assertThat(questions).hasSize(5);
         assertThat(question.getAnswer()).isNull();
     }
 
@@ -87,17 +88,28 @@ public class ServiceTest extends DataJpaTest {
     }
 
     @Test
-    public void whenUpdateQuestionWithOptionsDeleteOptions() {
-        QuestionDto question = this.questionService.findById(4);
-        question.setQuestion("Hello!");
-        question.setAnswerType(AnswerType.SINGLE_LINE);
-        this.questionService.update(question);
+    public void whenUpdateQuestionWithOptionsAnswerShouldBeUpdated() {
+        QuestionDto questionDto = this.questionService.findById(4);
+        List<AnswerOptionDto> options = questionDto.getOptions();
+        AnswerDto answerDto = new AnswerDto();
+        answerDto.setId(4);
+        List<AnswerOptionDto> answerOptions = new ArrayList<>();
+        answerOptions.add(options.get(1));
+        answerDto.setOptions(answerOptions);
+        answerDto.setAnswer(options.get(1).getOption());
+        answerDto.setQuestion(questionDto);
+        answerDto = this.answerService.save(answerDto);
 
-        question = this.questionService.findById(4);
-        List<AnswerOptionDto> options = question.getOptions();
-        assertThat(options).isNull();
+        questionDto.setAnswer(answerDto);
+        questionDto = this.questionService.update(questionDto);
 
-        Page<AnswerOptionDto> answerOptions = this.questionService.findAllAnswerOptions(pageable);
-        assertThat(answerOptions).isEmpty();
+        options = questionDto.getOptions();
+        AnswerOptionDto answerOptionDto = options.get(1);
+        answerOptionDto.setOption("TEST");
+        questionDto = this.questionService.update(questionDto);
+
+        answerDto = questionDto.getAnswer();
+        assertThat(answerDto).isNotNull();
+        assertThat(answerDto.getAnswer()).isEqualTo("TEST");
     }
 }

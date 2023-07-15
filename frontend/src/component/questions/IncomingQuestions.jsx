@@ -271,9 +271,9 @@ export default function IncomingQuestions() {
                     )}
                     {questions.length !== 0 && (
                         <nav aria-label="Page navigation">
-                            <ul className="pagination">
+                            <ul className="pagination justify-content-center mt-3">
                                 <li className="page-item">
-                                    <a className="page-link" href="#" onClick={clickPrevHandler}>Previous</a>
+                                    <a className="page-link" href="#" onClick={clickPrevHandler}>&laquo;</a>
                                 </li>
                                 {[...Array(totalPages)].map((_, index) => (
                                     <li key={index + 1} className={`page-item ${page === index + 1 ? 'active' : ''}`}>
@@ -283,7 +283,7 @@ export default function IncomingQuestions() {
                                     </li>
                                 ))}
                                 <li className="page-item">
-                                    <a className="page-link" href="#" onClick={clickNextHandler}>Next</a>
+                                    <a className="page-link" href="#" onClick={clickNextHandler}>&raquo;</a>
                                 </li>
                             </ul>
                         </nav>

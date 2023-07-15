@@ -116,90 +116,100 @@ export default function EditUser() {
             <div>
                 <Header/>
             </div>
-            <div className="container">
-                <h2>Edit User</h2>
+            <div className="container" style={{ width: 500 }}>
+                <h2 className="text-center">Edit user</h2>
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-3">
-                        <label htmlFor="firstName" className="form-label">First name</label>
+                    <div className="mb-3 form-floating">
                         <input
                             type="text"
-                            className="form-control"
+                            className={`form-control ${firstNameError ? 'is-invalid' : ''}`}
                             id="firstName"
                             name="firstName"
                             value={firstName}
+                            placeholder="First name"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{firstNameError}</div>
+                        <label htmlFor="firstName" className="form-label">First name</label>
+                        {firstNameError && <div className="invalid-feedback">{firstNameError}</div>}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="lastName" className="form-label">Last name</label>
+                    <div className="mb-3 form-floating">
                         <input
                             type="text"
-                            className="form-control"
+                            className={`form-control ${lastNameError ? 'is-invalid' : ''}`}
                             id="lastName"
                             name="lastName"
                             value={lastName}
+                            placeholder="Last name"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{lastNameError}</div>
+                        <label htmlFor="lastName" className="form-label">Last name</label>
+                        {lastNameError && <div className="invalid-feedback">{lastNameError}</div>}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
+                    <div className="mb-3 form-floating">
                         <input
                             type="email"
-                            className="form-control"
+                            className={`form-control ${emailError ? 'is-invalid' : ''}`}
                             id="email"
                             name="email"
                             value={email}
+                            placeholder="Email"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{emailError}</div>
+                        <label htmlFor="email" className="form-label">Email</label>
+                        {emailError && <div className="invalid-feedback">{emailError}</div>}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="phoneNumber" className="form-label">Phone number</label>
+                    <div className="mb-3 form-floating">
                         <input
-                            type="text"
-                            className="form-control"
+                            type="tel"
+                            className={`form-control ${phoneNumberError ? 'is-invalid' : ''}`}
                             id="phoneNumber"
                             name="phoneNumber"
                             value={phoneNumber}
+                            placeholder="Phone number"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{phoneNumberError}</div>
+                        <label htmlFor="phoneNumber" className="form-label">Phone number</label>
+                        {phoneNumberError && <div className="invalid-feedback">{phoneNumberError}</div>}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Current password</label>
+                    <div className="mb-3 form-floating">
                         <input
                             type="password"
-                            className="form-control"
+                            className={`form-control ${passwordError ? 'is-invalid' : ''}`}
                             id="password"
                             name="password"
                             value={password}
+                            placeholder="Password"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{passwordError}</div>
+                        <label htmlFor="password" className="form-label">Password</label>
+                        {passwordError && <div className="invalid-feedback">{passwordError}</div>}
                     </div>
-                    <div className="mb-3">
-                        <label htmlFor="confirmedPassword" className="form-label">New password</label>
+                    <div className="mb-3 form-floating">
                         <input
                             type="password"
-                            className="form-control"
+                            className={`form-control ${confirmedPasswordError ? 'is-invalid' : ''}`}
                             id="confirmedPassword"
                             name="confirmedPassword"
                             value={confirmedPassword}
+                            placeholder="New password"
                             onChange={handleInputChange}
                         />
-                        <div className="text-danger">{confirmedPasswordError}</div>
+                        <label htmlFor="confirmedPassword" className="form-label">New password</label>
+                        {confirmedPasswordError && <div className="invalid-feedback">{confirmedPasswordError}</div>}
                     </div>
-                    <button type="submit" className="btn btn-primary">Edit</button>
+                    <div className="text-center">
+                        <button type="submit" className="btn btn-primary w-100">Edit</button>
+                    </div>
                 </form>
                 {isInfoModalOpen && (
                     <div>
-                        <InfoModal message={messageInfo}
-                                   onClose={() => {
-                                       setIsInfoModalOpen(false);
-                                       navigate('/');
-                                   }}/>
+                        <InfoModal
+                            message={messageInfo}
+                            onClose={() => {
+                                setIsInfoModalOpen(false);
+                                navigate(`/token/${token}`, { state: { allowed: true } });
+                            }}
+                        />
                     </div>
                 )}
             </div>

@@ -16,7 +16,7 @@ export default function OutgoingQuestions() {
     const [page, setPage] = useState(1);
 
     const [questions, setQuestions] = useState([]);
-    const [totalPages, setTotalPages] = useState('');
+    const [totalPages, setTotalPages] = useState(0);
     const [pageSize, setPageSize] = useState(0);
     const [openConnect, setOpenConnect] = useState(false);
 
@@ -32,11 +32,15 @@ export default function OutgoingQuestions() {
     const [messageInfo, setMessageInfo] = useState('');
 
     useEffect(() => {
-        axios.get(`/questions/outgoing/${page}`,
-            {
+        loadQuestions(page);
+    }, [page]);
+
+    const loadQuestions = (page) => {
+        axios
+            .get(`/questions/outgoing/${page}`, {
                 headers: {
                     "Authorization": token,
-                }
+                },
             })
             .then((res) => {
                 setQuestions(res.data.content);
@@ -49,7 +53,7 @@ export default function OutgoingQuestions() {
             .catch((error) => {
                 console.error(error);
             });
-    }, [page]);
+    };
 
     const clickPrevHandler = (event) => {
         const prevPage = page - 1;
@@ -148,6 +152,7 @@ export default function OutgoingQuestions() {
                     setQuestions([...questions, newQuestion]);
                 } else {
                     setTotalPages(totalPages + 1);
+                    setPage(page + 1);
                 }
 
                 clearData();
@@ -251,6 +256,13 @@ export default function OutgoingQuestions() {
                 setQuestions(prevQuestions => prevQuestions.filter(question => question.id !== questionId));
                 setMessageInfo("Question has been deleted.");
                 setIsInfoModalOpen(true);
+                if (questions.length === 1 && page === totalPages) {
+                    setPage(page - 1);
+                }
+
+                if (questions.length === pageSize && page < totalPages) {
+                    loadQuestions(page);
+                }
             }
         } catch (error) {
             console.log(error);
@@ -354,9 +366,9 @@ export default function OutgoingQuestions() {
                     )}
                     {questions.length !== 0 && (
                         <nav aria-label="Page navigation">
-                            <ul className="pagination">
+                            <ul className="pagination justify-content-center mt-3">
                                 <li className="page-item">
-                                    <a className="page-link" href="#" onClick={clickPrevHandler}>Previous</a>
+                                    <a className="page-link" href="#" onClick={clickPrevHandler}>&laquo;</a>
                                 </li>
                                 {[...Array(totalPages)].map((_, index) => (
                                     <li key={index + 1} className={`page-item ${page === index + 1 ? 'active' : ''}`}>
@@ -366,7 +378,7 @@ export default function OutgoingQuestions() {
                                     </li>
                                 ))}
                                 <li className="page-item">
-                                    <a className="page-link" href="#" onClick={clickNextHandler}>Next</a>
+                                    <a className="page-link" href="#" onClick={clickNextHandler}>&raquo;</a>
                                 </li>
                             </ul>
                         </nav>

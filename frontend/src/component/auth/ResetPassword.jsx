@@ -69,12 +69,12 @@ export default function ResetPassword() {
     }
 
     return (
-        <div className="container mt-5">
+        <div className="container mt-5" style={{width:500}}>
             <div className="row">
                 <div className="col-md-6 offset-md-3">
-                    <h5 className="title">Change Password</h5>
+                    <h3 className="title text-center">Change Password</h3>
                     <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
+                        <div className="mb-3 needs-validation form-floating">
                             <input
                                 id="password"
                                 name="password"
@@ -84,21 +84,23 @@ export default function ResetPassword() {
                                 value={password}
                                 onChange={handleInputChange}
                             />
+                            <label htmlFor={"password"} className="form-label">Password</label>
                         </div>
-                        <div className="mb-3">
+                        <div className="mb-3 needs-validation form-floating">
                             <input
                                 id="confirmedPassword"
                                 name="confirmedPassword"
                                 type="password"
                                 className="form-control"
-                                placeholder="Confirm Password"
+                                placeholder="Confirm password"
                                 value={confirmedPassword}
                                 onChange={handleInputChange}
                             />
+                            <label htmlFor={"confirmedPassword"} className="form-label">Confirm password</label>
                         </div>
                         <div className="text-danger">{passwordError}</div>
                         <div>
-                            <button type="submit" className="btn btn-primary">
+                            <button type="submit" className="btn btn-primary w-100">
                                 Change password
                             </button>
                         </div>

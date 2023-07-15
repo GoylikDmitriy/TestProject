@@ -59,8 +59,9 @@ export default function DeleteUser() {
             <div>
                 <Header/>
             </div>
-            <div className={"container mt-5"}>
-                <div className={"mb-3 needs-validation"}>
+            <div className={"container mt-5"} style={{width:500}}>
+                <h2 className="text-center mb-4">Delete account</h2>
+                <div className={"mb-3 needs-validation form-floating"}>
                     <input
                         id={"password"}
                         name={"password"}
@@ -70,6 +71,7 @@ export default function DeleteUser() {
                         value={password}
                         onChange={handleInputChange}
                     />
+                    <label htmlFor="password" className="form-label">Password</label>
                     <div className="invalid-feedback">{passwordError}</div>
                 </div>
                 <div>

@@ -43,9 +43,9 @@ export default function ForgotPassword() {
     }
 
     return (
-        <div className={"container mt-5"}>
+        <div className={"container mt-5"} style={{width:500}}>
             <div className="col-md-6 offset-md-3">
-                <div className={"mb-3 needs-validation"}>
+                <div className={"mb-3 needs-validation form-floating"}>
                     <input
                         onChange={handleInputChange}
                         id={"email"}
@@ -55,6 +55,7 @@ export default function ForgotPassword() {
                         placeholder={"email"}
                         value={email}
                     />
+                    <label htmlFor={"email"} className="form-label">Email</label>
                     <div className="invalid-feedback">{emailError}</div>
                 </div>
                 <div>

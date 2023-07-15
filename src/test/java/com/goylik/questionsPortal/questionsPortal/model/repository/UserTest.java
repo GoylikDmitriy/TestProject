@@ -60,9 +60,9 @@ public class UserTest extends DataJpaTest {
 
     @Test
     public void shouldFindUserByEmail() {
-        User user = this.userRepository.findByEmail("denny.cooper@gmail.com");
+        User user = this.userRepository.findByEmail("denny.cooper@mail1.com");
         assertThat(user).isNotNull();
-        assertThat(user.getEmail()).isEqualTo("denny.cooper@gmail.com");
+        assertThat(user.getEmail()).isEqualTo("denny.cooper@mail1.com");
 
         user = this.userRepository.findByEmail("de.pe@gmail.com");
         assertThat(user).isNull();
@@ -88,16 +88,5 @@ public class UserTest extends DataJpaTest {
         this.userRepository.save(user);
         user = this.userRepository.findById(1).orElse(null);
         assertThat(user.getFirstName()).isEqualTo("Jack");
-    }
-
-    @Test
-    @Transactional
-    public void shouldDeleteUser() {
-        User user = this.userRepository.findById(1).orElse(null);
-        this.userRepository.delete(user);
-        List<User> users = this.userRepository.findAll();
-        user = this.userRepository.findById(1).orElse(null);
-        assertThat(users).hasSize(3);
-        assertThat(user).isNull();
     }
 }

@@ -72,7 +72,7 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
-                                "/login", "/sign-up","/error", "/reset-password", "/forgot-password",
+                                "/login", "/signup", "/isConfirmed", "/reset-password", "/forgot-password",
                                 "/registrationConfirm", "/resendVerificationToken", "/ws"
                         ).permitAll()
                         .anyRequest().permitAll()

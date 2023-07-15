@@ -48,7 +48,7 @@ public class QuestionTest extends DataJpaTest {
     @Test
     public void shouldFindAllQuestions() {
         List<Question> questions = this.questionRepository.findAll();
-        assertThat(questions).hasSize(4);
+        assertThat(questions).hasSize(5);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class QuestionTest extends DataJpaTest {
         Question question = new Question("test question", AnswerType.SINGLE_LINE);
         this.questionRepository.save(question);
         List<Question> questions = this.questionRepository.findAll();
-        assertThat(questions).hasSize(5);
+        assertThat(questions).hasSize(6);
         Question savedQuestion = questions.get(questions.size() - 1);
         assertThat(savedQuestion).isNotNull();
         assertThat(savedQuestion).isEqualTo(question);
@@ -98,7 +98,7 @@ public class QuestionTest extends DataJpaTest {
         this.questionRepository.delete(question);
         List<Question> questions = this.questionRepository.findAll();
         question = this.questionRepository.findById(1).orElse(null);
-        assertThat(questions).hasSize(3);
+        assertThat(questions).hasSize(4);
         assertThat(question).isNull();
     }
 }
