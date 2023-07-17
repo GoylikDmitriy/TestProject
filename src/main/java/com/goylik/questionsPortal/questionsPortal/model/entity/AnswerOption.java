@@ -1,6 +1,5 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 @Entity

@@ -1,15 +1,15 @@
 package com.goylik.questionsPortal.questionsPortal.security;
 
-import com.goylik.questionsPortal.questionsPortal.model.entity.User;
+import com.goylik.questionsPortal.questionsPortal.model.dto.UserDto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
 public class UserDetailsImpl implements UserDetails {
-    private final User user;
+    private final UserDto user;
 
-    public UserDetailsImpl(User user) {
+    public UserDetailsImpl(UserDto user) {
         this.user = user;
     }
 
@@ -45,10 +45,10 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.user.isEnabled();
     }
 
-    public User getUser() {
+    public UserDto getUser() {
         return user;
     }
 }

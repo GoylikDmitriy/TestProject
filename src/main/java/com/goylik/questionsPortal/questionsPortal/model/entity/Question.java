@@ -1,7 +1,6 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
 import com.goylik.questionsPortal.questionsPortal.model.AnswerType;
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -24,6 +23,30 @@ public class Question extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     private List<AnswerOption> options;
+
+    @ManyToOne
+    @JoinColumn(name = "to_user_id")
+    private User toUser;
+
+    @ManyToOne
+    @JoinColumn(name = "from_user_id")
+    private User fromUser;
+
+    public User getToUser() {
+        return toUser;
+    }
+
+    public void setToUser(User toUser) {
+        this.toUser = toUser;
+    }
+
+    public User getFromUser() {
+        return fromUser;
+    }
+
+    public void setFromUser(User fromUser) {
+        this.fromUser = fromUser;
+    }
 
     public Question() {}
 

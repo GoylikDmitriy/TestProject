@@ -1,6 +1,5 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -25,15 +24,17 @@ public class User extends BaseEntity {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "to_user_id")
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Question> incomingQuestions;
 
-    @OneToMany(cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
-    @JoinColumn(name = "from_user_id")
+    @OneToMany(mappedBy = "fromUser", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<Question> outgoingQuestions;
 
+    @Column(name = "enabled")
+    private Boolean enabled;
+
     public User() {
+        this.enabled = Boolean.FALSE;
     }
 
     public User(String firstName, String lastName, String email, String password, String phoneNumber) {
@@ -42,6 +43,7 @@ public class User extends BaseEntity {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
+        this.enabled = Boolean.FALSE;
     }
 
     public void addOutgoingQuestion(Question question) {
@@ -118,6 +120,14 @@ public class User extends BaseEntity {
 
     public void setOutgoingQuestions(List<Question> outgoingQuestions) {
         this.outgoingQuestions = outgoingQuestions;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

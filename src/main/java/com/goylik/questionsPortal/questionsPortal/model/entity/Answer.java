@@ -1,7 +1,8 @@
 package com.goylik.questionsPortal.questionsPortal.model.entity;
 
-import com.goylik.questionsPortal.questionsPortal.model.BaseEntity;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "answers")
@@ -12,6 +13,18 @@ public class Answer extends BaseEntity {
     @OneToOne
     @JoinColumn(name = "question_id")
     private Question question;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "answer_id")
+    private List<AnswerOption> options;
+
+    public List<AnswerOption> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<AnswerOption> options) {
+        this.options = options;
+    }
 
     public Answer() {}
 

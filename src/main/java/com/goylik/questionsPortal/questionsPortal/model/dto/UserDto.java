@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
+import java.util.Objects;
 
 public class UserDto {
+    private Integer id;
     @NotEmpty(message = "shouldn't be empty")
     @Email(message = "email not valid")
     private String email;
@@ -27,6 +29,8 @@ public class UserDto {
     @NotEmpty(message = "shouldn't be empty")
     @Digits(fraction = 0, integer = 9)
     private String phoneNumber;
+
+    private Boolean enabled;
 
     private List<QuestionDto> incomingQuestions;
     private List<QuestionDto> outgoingQuestions;
@@ -94,5 +98,34 @@ public class UserDto {
 
     public void setConfirmedPassword(String confirmedPassword) {
         this.confirmedPassword = confirmedPassword;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(id, userDto.id) && Objects.equals(email, userDto.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email);
     }
 }
